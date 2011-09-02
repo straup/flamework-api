@@ -1,0 +1,8 @@
+{capture assign="page_title"}{$method}{/capture}
+{include file="inc_head.txt"}
+
+<h2>{$method|escape}</h2>
+
+{* do something with $method_row here *}
+
+{include file="inc_foot.txt"}
