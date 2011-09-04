@@ -2,8 +2,19 @@
 
 	#################################################################
 
-	function test_echo($args){
-		api_output_ok($args);
+	function test_echo(){
+
+		$out = array();
+
+		foreach ($_GET as $k => $ignore){
+
+			if ($k = filter_strict($k)){
+				$v = filter_strict(get_str($k));
+				$out[$k] = $v;
+			}
+		}
+
+		api_output_ok($out);
 	}
 
 	#################################################################

@@ -12,29 +12,27 @@
 			api_output_error(999, 'API disabled');
 		}
 
+		$method = filter_strict($method);
+		$enc_method = htmlspecialchars($method);
+
 		$methods = $GLOBALS['cfg']['api']['methods'];
 
 		if ((! $method) || (! isset($methods[$method]))){
-			api_output_error(404, 'Method not found');
+			api_output_error(404, "Method '{$enc_method}' not found");
 		}
 
 		$method_row = $methods[$method];
 
 		if (! $method_row['enabled']){
-			api_output_error(404, 'Method not found');
+			api_output_error(404, "Method '{$enc_method}' not found");
 		}
-
-		# Personally, I prefer to just call the functions from
-		# lib_sanitize but there are here if you need them...
-
-		$args = (isset($method_row['require_post_args'])) ? $_POST : $_GET;
 
 		# TO DO: check API keys here
 
 		# TO DO: actually check auth here (whatever that means...)
 
 		if ($method_row['requires_auth']){
-			api_auth_ensure_auth($args);
+			api_auth_ensure_auth($method_row);
 		}
 
 		loadlib($method_row['library']);
@@ -43,7 +41,7 @@
 		$method = array_pop($parts);
 
 		$func = "{$method_row['library']}_{$method}";
-		call_user_func($func, $args);
+		call_user_func($func);
 
 		exit();
 	}
