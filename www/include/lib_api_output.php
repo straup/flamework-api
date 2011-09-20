@@ -4,7 +4,7 @@
 
 	# Hey look! Running code!!
 
-	$format = $GLOBALS['cfg']['api_default_format'];
+	$format = $GLOBALS['cfg']['api']['default_format'];
 
 	if ($_format = get_str('format')){
 
