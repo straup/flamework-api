@@ -4,6 +4,18 @@
 	loadlib("api_keys");
 	loadlib("api_output");
 
+ 	#################################################################
+
+	# THIS IS NOT AWESOME. PLEASE MAKE ME BETTER.
+	# (ON THE OTHER HAND, IT WORKS...)
+
+	$api_config = FLAMEWORK_INCLUDE_DIR . "config-api.json";
+	$fh = fopen($api_config, "r");
+	$data = fread($fh, filesize($api_config));
+	fclose($fh);
+
+	$GLOBALS['cfg']['api'] = json_decode($data, "as hash");
+
 	#################################################################
 
 	function api_dispatch($method){
