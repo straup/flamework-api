@@ -1,9 +1,5 @@
 <?php
 
-	loadlib("api_auth");
-	loadlib("api_keys");
-	loadlib("api_output");
-
  	#################################################################
 
 	# THIS IS NOT AWESOME. PLEASE MAKE ME BETTER.
@@ -15,6 +11,13 @@
 	fclose($fh);
 
 	$GLOBALS['cfg']['api'] = json_decode($data, "as hash");
+
+	#################################################################
+
+	loadlib("api_auth");
+	loadlib("api_keys");
+	loadlib("api_output");
+	loadlib("api_utils");
 
 	#################################################################
 
