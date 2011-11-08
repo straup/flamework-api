@@ -1,25 +1,33 @@
 <?php
 
 	include("include/init.php");
-	loadlib("api_output");
+	loadlib("api");
 
 	$method = get_str("method");
-	$method = filter_strict($method);
 
-	if ((! $method) || (! isset($GLOBALS['cfg']['api']['methods'][$method]))){
+	if (! $method){
 		error_404();
 	}
 
-	$method_row = $GLOBALS['cfg']['api']['methods'][$method];
-
-	if ((! $method_row['enabled']) || (! $method_row['documented'])){
+	if (! isset($GLOBALS['cfg']['api']['methods'][$method])){
 		error_404();
 	}
 
-	$GLOBALS['smarty']->assign_by_ref("method", $method);
-	$GLOBALS['smarty']->assign_by_ref("method_row", $method_row);
+	$details = $GLOBALS['cfg']['api']['methods'][$method];
+
+	if (! $details['documented']){
+		error_404();
+	}
+
+	if (! $details['enabled']){
+		error_404();
+	}
+
+	# TO DO: convert markdown in $details
+
+	$GLOBALS['smarty']->assign("method", $method);
+	$GLOBALS['smarty']->assign_by_ref("details", $details);
 
 	$GLOBALS['smarty']->display("page_api_method.txt");
 	exit();
-
 ?>
