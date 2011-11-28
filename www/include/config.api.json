@@ -6,15 +6,15 @@
 		"json"
 	],
 
-	"methods" => {
+	"methods": {
 
-		"test.echo" => {
+		"test.echo": {
 			"documented": 1,
 			"enabled": 1,
 			"library": "api_test"
 		},
 
-		"test.error" => {
+		"test.error": {
 			"documented": 1,
 			"enabled": 1,
 			"library": "api_test"
