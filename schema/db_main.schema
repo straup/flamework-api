@@ -19,7 +19,7 @@ CREATE TABLE `AuthTokens` (
   `user_id` INT(11) unsigned NOT NULL,
   `app_id` BIGINT(20) unsigned NOT NULL,         
   `app_secret` VARCHAR(64) NOT NULL,
-  `app_perms` TINYINT(3) UNSIGNEDNOT NULL,
+  `app_perms` TINYINT(3) UNSIGNED NOT NULL,
   `created` INT(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `by_app` (`app_id`, `user_id`)
