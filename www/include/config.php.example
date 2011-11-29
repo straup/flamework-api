@@ -1,0 +1,6 @@
+<?php
+
+	$GLOBALS['cfg']['enable_feature_api'] = 1;
+	$GLOBALS['cfg']['enable_feature_api_documentation'] = 1;
+
+?>

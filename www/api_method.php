@@ -3,6 +3,14 @@
 	include("include/init.php");
 	loadlib("api");
 
+	if (! $GLOBALS['cfg']['enable_feature_api']){
+		error_disabled();
+	}
+
+	if (! $GLOBALS['cfg']['enable_feature_api_documentation']){
+		error_disabled();
+	}
+
 	$method = get_str("method");
 
 	if (! $method){
