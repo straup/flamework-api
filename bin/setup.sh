@@ -26,4 +26,7 @@ mkdir ${PROJECT}/schema/alters
 cat ${API}/schema/db_main.schema >> ${PROJECT}/schema/db_main.schema
 cat ${API}/schema/db_main.schema >> ${PROJECT}/schema/alters/${YMD}.db_main.schema
 
-# TO DO: .htaccess configs
+# TO DO: update the project files themselves
+
+cat ${API}/www/.htaccess
+cat ${API}/www/include/config.php.example
