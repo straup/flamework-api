@@ -43,4 +43,4 @@
 
 <p><a href="{$cfg.abs_root_url}api/methods">API documentation</a></p>
 
-{include file="inc_details.txt"}
+{include file="inc_foot.txt"}
