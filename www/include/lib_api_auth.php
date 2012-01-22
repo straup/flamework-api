@@ -2,9 +2,9 @@
 
 	#################################################################
 
-	function api_auth_ensure_auth(){
+	function api_auth_ensure_auth(&$method){
 
-		if (! api_auth_has_auth()){
+		if (! api_auth_has_auth($method)){
 			api_output_error(403, 'Forbidden');
 		}
 	}
