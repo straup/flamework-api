@@ -18,6 +18,8 @@ cp ${API}/www/include/*.php ${PROJECT}/www/include/
 echo "copying library configs to ${PROJECT}"
 cp ${API}/www/include/*.json ${PROJECT}/www/include/
 
+cp -R ${API}/www/include/config.api.examples ${PROJECT}/www/include/
+
 echo "copying database schemas to ${PROJECT}; you will still need to run database alters manually"
 
 YMD=`date "+%Y%m%d"`
