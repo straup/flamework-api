@@ -2,5 +2,7 @@
 
 	$GLOBALS['cfg']['enable_feature_api'] = 1;
 	$GLOBALS['cfg']['enable_feature_api_documentation'] = 1;
+	$GLOBALS['cfg']['api_per_page_default'] = 100;
+	$GLOBALS['cfg']['api_per_page_max'] = 500;
 
 ?>
