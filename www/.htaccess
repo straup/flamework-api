@@ -4,3 +4,17 @@ RewriteRule  ^api/?$			api_rest.php		[L]
 RewriteRule  ^api/methods/?$		api_methods.php	[L]
 RewriteRule  ^api/methods/(.*)/?$	api_method.php?method=$1&%{QUERY_STRING}		[L]
 RewriteRule  ^api/rest/(.*)/?$		api_rest.php?method=$1&%{QUERY_STRING}		[L]
+
+# Fancy API stuff (as in: api.example.com)
+#
+# RewriteCond %{HTTP_HOST} 	^api.example.com$
+# RewriteRule  ^rest/?$		api_rest.php?%{QUERY_STRING}  [L]
+#
+# FIX ME...
+# RewriteCond %{HTTP_HOST} 	^api.example.com$
+# RewriteRule ^(?!rest/)	http://www.example.com/api/	[R]
+#
+# RewriteRule  ^api/?$			api.php		[L]
+# RewriteRule  ^api/methods/?$		api_methods.php	[L]
+# RewriteRule  ^api/methods/(.*)/?$	api_method.php?method=$1&%{QUERY_STRING}		[L]
+# RewriteRule  ^api/rest/(.*)/?$	http://api.example.com/rest/?method=$1&%{QUERY_STRING}  [R]

@@ -1,0 +1,20 @@
+{capture assign="page_title"}API{/capture}
+{include file="inc_head.txt"}
+
+{capture assign="api_request_host"}{if $cfg.api_abs_root_url}{$cfg.api_abs_root_url}{else}{$cfg.abs_root_url}{/if}{/capture}
+
+<div style="text-align:left;">
+<h1 style="margin-bottom:30px;">{$cfg.site_name|escape}</h1>
+
+<p>{$cfg.site_name|escape} offers a COULD-PLAY-REST-ON-TV style application programming interface (API) for developers to use in their products and services. API requests are made by passing one or more parameters to:</p>
+
+<p style="text-align:center;"><code>{$api_request_host}rest/</code></p>
+
+<p>Unless otherwise noted API methods can be called using the HTTP <code>GET</code> request method. API responses may be returned in a number of formats which at the moment means: only <code>JSON</code>.</p>
+
+<p>Please consult the <a style="text-decoration:underline !important;" href="{$cfg.abs_root_url}api/methods/">API documentation</a> for complete details.</p>
+
+</div>
+
+
+{include file="inc_foot.txt"}

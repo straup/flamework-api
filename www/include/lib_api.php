@@ -44,6 +44,13 @@
 
 		$method_row['name'] = $method;
 
+		if (isset($method_row['request_method'])){
+
+			if ($_SERVER['REQUEST_METHOD'] != $method_row['request_method']){
+				api_output_error(405, 'Method not allowed');
+			}
+		}
+
 		# TO DO: check API keys here
 
 		# TO DO: actually check auth here (whatever that means...)

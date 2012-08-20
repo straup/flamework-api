@@ -1,6 +1,8 @@
 {assign var="page_title" value="API methods"}
 {include file="inc_head.txt"}
 
+<div id="api_methods">
+
 {foreach from=$method_classes item="methods" key="class"}
 
 <h2>{$class|escape}</h2>
@@ -12,5 +14,7 @@
 </ul>
 
 {/foreach}
+
+</div>
 
 {include file="inc_foot.txt"}
