@@ -6,6 +6,9 @@ RewriteRule  ^api/methods/(.*)/?$	api_method.php?method=$1&%{QUERY_STRING}		[L]
 RewriteRule  ^api/rest/(.*)/?$		api_rest.php?method=$1&%{QUERY_STRING}		[L]
 
 # Fancy API stuff (as in: api.example.com)
+# Do not forget to update your config file to set
+# $GLOBALS['cfg']['api_abs_root_url']
+# 
 #
 # RewriteCond %{HTTP_HOST} 	^api.example.com$
 # RewriteRule  ^rest/?$		api_rest.php?%{QUERY_STRING}  [L]

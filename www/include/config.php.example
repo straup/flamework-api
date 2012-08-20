@@ -5,4 +5,7 @@
 	$GLOBALS['cfg']['api_per_page_default'] = 100;
 	$GLOBALS['cfg']['api_per_page_max'] = 500;
 
+	# Per the fancy API stuff in the .htaccess file
+	# $GLOBALS['cfg']['api_abs_root_url'] = 'http://api.example.com/';
+
 ?>
