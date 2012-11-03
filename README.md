@@ -9,48 +9,69 @@ It also assumes that you are using a current version of [straup's fork of flamew
 
 Start with `bin/setup.sh`
 
-
-example.com/api/
+URLs
 --
 
-example.com/api/methods/
---
+### example.com/api/
 
-example.com/api/methods/SOME_METHOD_NAME/
---
+A simple landing page for the API with pointers to documentation about methods
+and delegated authentication.
 
-example.com/api/keys/
---
+### example.com/api/methods/
 
-example.com/api/keys/register/
---
+The list of public (enabled and documented) methods for the API.
 
-example.com/api/keys/API_KEYS/
---
+### example.com/api/methods/SOME_METHOD_NAME/
 
-example.com/api/keys/API_KEYS/tokens/
---
+Documentation and examples for individual API methods.
 
-example.com/api/oauth2/
---
+### example.com/api/keys/
 
-example.com/api/oauth2/authenticate/
---
+The list of API keys registered by a (logged in) user.
 
-example.com/api/oauth2/authenticate/like-magic/
---
+### example.com/api/keys/register/
 
-example.com/api/oauth2/authenticate/access_token/
---
+Create a new API key.
 
-example.com/api/oauth2/tokens/
---
+### example.com/api/keys/API_KEY/
 
-example.com/api/oauth2/tokens/ACCESS_TOKEN/
---
+Review or update an existing API key.
 
-example.com/rest/
---
+### example.com/api/keys/API_KEY/tokens/
+
+The list of OAuth2 access tokens associated with a given API key.
+
+### example.com/api/oauth2/
+
+A simple landing page for the OAuth2 webpages with pointers descriptions 
+and pointers.
+
+### example.com/api/oauth2/authenticate/
+
+The standard OAuth2 authenticate a user / authorize an application webpage.
+
+### example.com/api/oauth2/authenticate/like-magic/
+
+A non-standard helper OAuth2 webpage to allow (logged in) users to create
+themselves both an API key and a corresponding access token from a single page
+by "clicking a button".
+
+### example.com/api/oauth2/authenticate/access_token/
+
+The standard OAuth2 echange a (temporary) grant token for a (more permanent)
+access token endpoint. This is meant for robots.
+
+### example.com/api/oauth2/tokens/
+
+A list of OAuth2 access tokens for a (logged in) user.
+
+### example.com/api/oauth2/tokens/ACCESS_TOKEN/
+
+Review of update an existing OAuth2 access token.
+
+### example.com/rest/
+
+This is the actual API dispatch/endpoint. Code points here.
 
 See also
 --
