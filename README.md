@@ -9,6 +9,64 @@ It also assumes that you are using a current version of [straup's fork of flamew
 
 Start with `bin/setup.sh`
 
+config.api.json
+--
+
+API methods, and related specifics, are defined using a JSON config file. A
+simple config file looks like this:
+
+For example:
+
+	{
+		"default_format": "json",
+		"formats": [ "json" ],
+		"methods": {
+			"api.spec.methods": {
+				"description": "Return the list of available API response methods.",
+				"documented": 1,
+				"enabled": 1,
+				"library": "api_spec"
+			}
+	}
+
+Methods are defined as a hash (or dictionary) of hashes where the keys are
+method names and their values are a hash of method-specific details.
+
+### description
+
+A short blurb describing the method.
+
+### documented
+
+A boolean flag indicating whether or not to include this method in the online
+(and API based) documentation.
+
+### enabled
+
+A boolean flag indicating whether or not this method can be called.
+
+### library
+
+The name of the library to find the actual function that a method name
+corresponds to. All things being equal this is what will be invoked.
+
+### requires_auth
+
+A boolean flag indicating whether or not a method requires an authorization
+token to be passed (and tested).
+
+_This is not necessary to declare if you are using oauth2_
+
+### requires_crumb
+
+A boolean flag indicating whether or a method requires that a valid (Flamework)
+crumb ba passed (and validated).
+
+### request_method
+
+If present then the API dispatching code will ensure that the HTTP method used
+to invoke the (API) method matches.
+
 URLs
 --
 
