@@ -1,0 +1,3 @@
+<p>This API is experimental and you agree that you are using it at your own risk and won't abuse it and we, the Cooper-Hewitt, reserve the right to change things at our discretion with or without notice. This includes disabling access to the API if your applications starts misbehaving.</p>
+
+<p>Basically: Play nicely and understand that the API is still a work in progress. Don't build anything (yet) that will make you sad or pound the table if it suddenly stops working.</p>
