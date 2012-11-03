@@ -51,7 +51,7 @@
 		{if $token_count==1}
 
 		    {if $has_self_token}
-		    	<a href="{$cfg.abs_root_url}api/oauth2/tokens/{$self_token.access_token|escape}/">You have auth-ed this API key</a>
+		    	<a href="{$cfg.abs_root_url}api/oauth2/tokens/{$key.api_key|escape}/">You have auth-ed this API key</a>
 		    {else}
 			<a href="{$cfg.abs_root_url}api/keys/{$key.api_key|escape}/tokens/">One person has auth-ed this API key</a>
 		    {/if}
@@ -61,7 +61,7 @@
 
 		{if $has_self_token}
 		<div style="margin-top: 20px; font-size:small;">
-		    	<a href="{$cfg.abs_root_url}api/oauth2/tokens/{$self_token.access_token|escape}/">You have auth-ed this API key</a>
+		    	<a href="{$cfg.abs_root_url}api/oauth2/tokens/{$key.api_key|escape}/">You have auth-ed this API key</a>
 		</div>
 		{/if}
 

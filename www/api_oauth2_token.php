@@ -7,15 +7,24 @@
 	login_ensure_loggedin();
 
 	loadlib("api_keys");
+	loadlib("api_keys_utils");
 	loadlib("api_oauth2_access_tokens");
 
-	$token = request_str("access_token");
+	# First get the API key
+	
+	$more = array(
+		'ensure_isown' => 0
+	);
 
-	if (! $token){
+	$key_row = api_keys_utils_get_from_url($more);
+
+	if (! $key_row){
 		error_404();
 	}
 
-	$token_row = api_oauth2_access_tokens_get_by_token($token);
+	# Now the token for the user + key combo
+
+	$token_row = api_oauth2_access_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row);
 
 	if (! $token_row){
 		error_404();
@@ -29,7 +38,9 @@
 		error_404();
 	}
 
-	$token_row['app'] = api_keys_get_by_id($token_row['api_key_id']);
+	#
+
+	$token_row['app'] = $key_row;
 
 	$crumb_key = 'this_api_key';
 	$GLOBALS['smarty']->assign("crumb_key", $crumb_key);

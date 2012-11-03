@@ -200,9 +200,10 @@ access token endpoint. This is meant for robots.
 
 A list of OAuth2 access tokens for a (logged in) user.
 
-### example.com/api/oauth2/tokens/ACCESS_TOKEN/
+### example.com/api/oauth2/tokens/API_KEY/
 
-Review of update an existing OAuth2 access token.
+Review of update an existing OAuth2 access token. (Note how we are passing
+around the API key in URLs and not the actual access token.)
 
 ### example.com/rest/
 
