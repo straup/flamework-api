@@ -1,13 +1,44 @@
 flamework-api
 ==
 
-These are drop-in libraries for adding an API endpoint to a flamework
-project. It includes libraries and webpages for creating managing API keys as
-well as OAuth 2 access tokens.
+These are drop-in libraries for adding an API endpoint to a Flamework
+project. _It assumes that you are using a current version of [straup's fork of
+flamework](https://github.com/straup/flamework)._
 
-It also assumes that you are using a current version of [straup's fork of flamework](https://github.com/straup/flamework):
+It includes libraries and webpages for dispatching API requests and responses as
+well as creating and managing API keys.
 
-Start with `bin/setup.sh`
+There is also support for authenticated API methods using cookies (not really
+useful for third-party things) and OAuth2 access tokens.
+
+config.php
+--
+
+### $GLOBALS['cfg']['api_abs_root_url'] = "https://api." . parse_url($GLOBALS['cfg']['abs_root_url'], 1) . "/";
+
+### $GLOBALS['cfg']['api_auth_type'] = 'oauth2';
+
+### $GLOBALS['cfg']['enable_feature_api'] = 1;
+
+### $GLOBALS['cfg']['enable_feature_api_documentation'] = 1;
+
+### $GLOBALS['cfg']['enable_feature_api_logging'] = 1;
+
+### $GLOBALS['cfg']['enable_feature_api_throttling'] = 0;
+
+### $GLOBALS['cfg']['enable_feature_api_require_keys'] = 0;
+
+Because OAuth2...
+
+### $GLOBALS['cfg']['enable_feature_api_register_keys'] = 1;
+
+### $GLOBALS['cfg']['enable_feature_api_delegated_auth'] = 1;
+
+### $GLOBALS['cfg']['enable_feature_api_authenticate_self'] = 1;
+
+### $GLOBALS['cfg']['api_per_page_default'] = 100;
+
+### $GLOBALS['cfg']['api_per_page_max'] = 500;
 
 config.api.json
 --
@@ -69,6 +100,21 @@ to invoke the (API) method matches.
 
 URLs
 --
+
+These are the URLs/endpoints that will be added to your project if you install flamework-api.
+
+Take a look at the .htaccess file and pay close attention to all this stuff
+that's been commented out at the top. It's a lot of hoop-jumping to separate API
+calls (api.example.com/rest) from all the other user-level administrative pages
+(example.com/api/methods) and to make sure things that need to be done over SSL
+are (like OAuth2).
+
+By default it's all commented out because what do I know about your webserver is
+configured. So spend a couple minutes looking at all this stuff and thinking
+about it and adjusting accordingly.
+
+Also: Remember that all the security around OAuth2 is predicated around the use
+of SSL.
 
 ### example.com/api/
 
