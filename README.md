@@ -1,15 +1,12 @@
 flamework-api
---
-
-**This is a work in progress**
+==
 
 These are drop-in libraries for adding an API endpoint to a flamework
-project. There is currently no support for register(ed/ing) API keys or
-delegated authentication.
+project.
 
-It also assumes that you are using a current version of [my fork of flamework](https://github.com/straup/flamework):
+It also assumes that you are using a current version of [straup's fork of flamework](https://github.com/straup/flamework):
 
-Start with [bin/setup.sh](https://github.com/straup/flamework-api/tree/master/bin/setup.sh)
+Start with `bin/setup.sh`
 
 See also
 --

@@ -1,11 +1,22 @@
 <?php
 
+	# API stuff
+
+	$GLOBALS['cfg']['api_abs_root_url'] = "https://api." . parse_url($GLOBALS['cfg']['abs_root_url'], 1) . "/";
+	$GLOBALS['cfg']['api_auth_type'] = 'oauth2';
+
 	$GLOBALS['cfg']['enable_feature_api'] = 1;
 	$GLOBALS['cfg']['enable_feature_api_documentation'] = 1;
+	$GLOBALS['cfg']['enable_feature_api_logging'] = 1;
+	$GLOBALS['cfg']['enable_feature_api_throttling'] = 0;
+
+	$GLOBALS['cfg']['enable_feature_api_require_keys'] = 0;		# because oauth2...
+	$GLOBALS['cfg']['enable_feature_api_register_keys'] = 1;
+
+	$GLOBALS['cfg']['enable_feature_api_delegated_auth'] = 1;
+	$GLOBALS['cfg']['enable_feature_api_authenticate_self'] = 1;
+
 	$GLOBALS['cfg']['api_per_page_default'] = 100;
 	$GLOBALS['cfg']['api_per_page_max'] = 500;
-
-	# Per the fancy API stuff in the .htaccess file
-	# $GLOBALS['cfg']['api_abs_root_url'] = 'http://api.example.com/';
 
 ?>

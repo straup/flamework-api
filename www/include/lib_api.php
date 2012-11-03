@@ -88,7 +88,7 @@
 		}
 
 		else if ($GLOBALS['cfg']['api_auth_type'] == 'oauth2'){
-			# api_auth_ensure_auth($method_row, $key_row);
+			api_auth_ensure_auth($method_row, $key_row);
 		}
 
 		else {}
