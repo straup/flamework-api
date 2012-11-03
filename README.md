@@ -14,17 +14,29 @@ useful for third-party things) and OAuth2 access tokens.
 config.php
 --
 
-### $GLOBALS['cfg']['api_abs_root_url'] = "https://api." . parse_url($GLOBALS['cfg']['abs_root_url'], 1) . "/";
+### $GLOBALS['cfg']['api_abs_root_url'] = "https://api.example.com/;
 
-### $GLOBALS['cfg']['api_auth_type'] = 'oauth2';
+The fully qualified hostname where your API lives. This may or not be the same
+as the host your project runs on.
 
 ### $GLOBALS['cfg']['enable_feature_api'] = 1;
 
+A boolean flag indicating whether or not the API is available for use.
+
 ### $GLOBALS['cfg']['enable_feature_api_documentation'] = 1;
+
+A boolean flag indicating whether or not documentation for API methods is
+publicly available.
 
 ### $GLOBALS['cfg']['enable_feature_api_logging'] = 1;
 
+A boolean flag indicating whether or not to log API requests.
+
+_Currently these are just written to the Apache error logs._
+
 ### $GLOBALS['cfg']['enable_feature_api_throttling'] = 0;
+
+This currently doesn't actually do anything. But, you know, throttling!
 
 ### $GLOBALS['cfg']['enable_feature_api_require_keys'] = 0;
 
@@ -32,13 +44,32 @@ Because OAuth2...
 
 ### $GLOBALS['cfg']['enable_feature_api_register_keys'] = 1;
 
+A boolean flag indicating whether or not to allow users to create new API keys.
+
 ### $GLOBALS['cfg']['enable_feature_api_delegated_auth'] = 1;
+
+A boolean flag indicating whether or not to allow users (and applications) to
+create new authentication (access) tokens.
+
+### $GLOBALS['cfg']['api_auth_type'] = 'oauth2';
+
+Currently supported auth types are `oauth2` and `cookies`.
 
 ### $GLOBALS['cfg']['enable_feature_api_authenticate_self'] = 1;
 
+A boolean flag indicating whether or not to allow users to magically create both
+API keys and auth (access) tokens for themselves without all the usual
+hoop-jumping of delegated auth.
+
 ### $GLOBALS['cfg']['api_per_page_default'] = 100;
 
+The default number of results to return, per page, for things that are
+paginated.
+
 ### $GLOBALS['cfg']['api_per_page_max'] = 500;
+
+The maximum number of results to return, per page, for things that are
+paginated.
 
 config.api.json
 --
