@@ -9,7 +9,12 @@ It includes libraries and webpages for dispatching API requests and responses as
 well as creating and managing API keys.
 
 There is also support for authenticated API methods using cookies (not really
-useful for third-party things) and OAuth2 access tokens.
+useful for third-party things) and OAuth2 access tokens (which means you've got
+a site that uses SSL).
+
+You can either install all of the files manually or you can the `bin/setup.sh`
+script which will install most of the relevant bits automatically and make a
+note of the stuff you'll see need to do yourself.
 
 config.php
 --
@@ -32,15 +37,19 @@ publicly available.
 
 A boolean flag indicating whether or not to log API requests.
 
-_Currently these are just written to the Apache error logs._
+Currently these are just written to the Apache error logs. Eventually it might
+be a configurable thing that allows to store things in Redis, etc. But right now
+it's not.
 
 ### $GLOBALS['cfg']['enable_feature_api_throttling'] = 0;
 
-This currently doesn't actually do anything. But, you know, throttling!
+This currently doesn't actually do anything. But, you know, throttling! (See
+above inre: logging.)
 
 ### $GLOBALS['cfg']['enable_feature_api_require_keys'] = 0;
 
-Because OAuth2...
+Irrelevant if you are using OAuth2 (below) otherwise a boolean flag indicating
+whether API methods must be called with a registered API key.
 
 ### $GLOBALS['cfg']['enable_feature_api_register_keys'] = 1;
 
@@ -117,7 +126,7 @@ corresponds to. All things being equal this is what will be invoked.
 A boolean flag indicating whether or not a method requires an authorization
 token to be passed (and tested).
 
-_This is not necessary to declare if you are using oauth2_
+_This is not necessary to declare if you are using OAuth2._
 
 ### requires_crumb
 
@@ -144,7 +153,7 @@ By default it's all commented out because what do I know about your webserver is
 configured. So spend a couple minutes looking at all this stuff and thinking
 about it and adjusting accordingly.
 
-Also: Remember that all the security around OAuth2 is predicated around the use
+Also: Remember that _all the security_ around OAuth2 is predicated around the use
 of SSL.
 
 ### example.com/api/
