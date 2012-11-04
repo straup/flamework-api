@@ -2,22 +2,30 @@
 
 	#################################################################
 
-	function api_auth_ensure_auth(&$method){
+	function api_auth_ensure_auth(&$method, $key_row=null){
 
-		if (! api_auth_has_auth($method)){
-			api_output_error(403, 'Forbidden');
+		$type = $GLOBALS['cfg']['api_auth_type'];
+
+		$auth_lib = "api_auth_{$type}";
+		$auth_func = "api_auth_{$type}_has_auth";
+
+		try {
+			loadlib($auth_lib);
 		}
-	}
 
-	#################################################################
+		catch (Exception $e){
+			return 0;
+		}
 
-	function api_auth_has_auth(&$method){
+		if (! function_exists){
+			return 0;
+		}
 
-		return ($GLOBALS['cfg']['user']['id']) ? 1 : 0;
+		$rsp = call_user_func_array($auth_func, array($method, $key_row));
 
-		# please write me...
-
-		return 0;
+		if (! $rsp['ok']){
+			api_output_error($rsp['error_code'], $rsp['error']);
+		}
 	}
 
 	#################################################################
