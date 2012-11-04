@@ -1,0 +1,14 @@
+{capture assign="page_title"}Not OAuth | API{/capture}
+{include file="inc_head.txt"}
+
+{include file="inc_api_header.txt" title="Not OAuth"}
+
+{include file="inc_api_noauth_permissions_glossary.txt"}
+
+{if "api_authenticate_self"|@features_is_enabled}
+
+<p>If you are <strong>not</strong> a developer and would like to try out the API then <a href="{$cfg.abs_root_url}api/oauth2/authenticate/like-magic/">you should visit this page</a> to create an access token for yourself. If you are a developer then you probably want to start by <a href="{$cfg.abs_root_url}api/keys/register/">creating an API key</a>.</p>
+
+{/if}
+
+{include file="inc_foot.txt"}
