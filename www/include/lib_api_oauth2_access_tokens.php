@@ -140,8 +140,6 @@
 		$id = dbtickets_create(64);
 
 		$token = api_oauth2_access_tokens_generate_token();
-		$secret = random_string(64);
-
 		$now = time();
 
 		$row = array(
@@ -150,7 +148,6 @@
 			'api_key_id' => $key['id'],
 			'user_id' => $user['id'],
 			'access_token' => $token,
-			'access_token_secret' => $secret,
 			'created' => $now,
 			'last_modified' => $now,
 		);

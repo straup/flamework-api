@@ -26,7 +26,6 @@ CREATE TABLE `OAuth2AccessTokens` (
   `access_token` varchar(64) NOT NULL,
   `created` int(11) unsigned NOT NULL,
   `perms` tinyint(3) unsigned NOT NULL,
-  `access_token_secret` varchar(64) NOT NULL,
   `last_modified` int(11) unsigned NOT NULL,
   `expires` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
