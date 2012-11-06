@@ -31,7 +31,7 @@
 	# use it in your code accordingly.
 
 	if (($GLOBALS['cfg']['api_subdomain']) && (preg_match("/{$GLOBALS['cfg']['api_subdomain']}\.(?:.*)/", $GLOBALS['cfg']['api_server_name']))){
-		$GLOBALS['cfg']['site_abs_root_url'] = str_replace("{$GLOBALS['cfg']['api_subdomain']}.", "", $GLOBALS['cfg']['site_abs_root_url']);
+		$GLOBALS['cfg']['site_abs_root_url'] = str_replace("{$GLOBALS['cfg']['api_subdomain']}.", "", $GLOBALS['cfg']['abs_root_url']);
 	}
 
 	else {
