@@ -6,7 +6,7 @@
 
 	function api_auth_oauth2_has_auth(&$method, $key_row=null){
 
-		$access_token = request_str("access_token");
+		$access_token = post_str("access_token");
 
 		if (! $access_token){
 			return not_okay('Required access token missing', 400);
