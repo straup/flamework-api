@@ -54,7 +54,14 @@
 
 		$method_row['name'] = $method;
 
-		if (isset($method_row['request_method'])){
+		if ($GLOBALS['cfg']['api_auth_type'] == 'oauth2'){
+
+			if ($_SERVER['REQUEST_METHOD'] != 'POST'){
+				api_output_error(405, 'Method not allowed');
+			}
+		}
+
+		else if (isset($method_row['request_method'])){
 
 			if ($_SERVER['REQUEST_METHOD'] != $method_row['request_method']){
 				api_output_error(405, 'Method not allowed');
@@ -83,11 +90,11 @@
 
 		# Second auth-y bits
 
-		if ($method_row['requires_auth']){
+		if ($GLOBALS['cfg']['api_auth_type'] == 'oauth2'){
 			api_auth_ensure_auth($method_row, $key_row);
 		}
 
-		else if ($GLOBALS['cfg']['api_auth_type'] == 'oauth2'){
+		else if ($method_row['requires_auth']){
 			api_auth_ensure_auth($method_row, $key_row);
 		}
 
