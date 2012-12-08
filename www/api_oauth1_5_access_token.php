@@ -1,7 +1,5 @@
 <?php
 
-	# noauth - as in "not oauth"
-
 	include("include/init.php");
 
 	features_ensure_enabled("api");
@@ -10,8 +8,8 @@
 	loadlib("api_keys");
 	loadlib("api_keys_utils");
 
-	loadlib("api_noauth_grant_tokens");
-	loadlib("api_noauth_access_tokens");
+	loadlib("api_oauth1_5_grant_tokens");
+	loadlib("api_oauth1_5_access_tokens");
 
 	#
 
@@ -67,7 +65,7 @@
 
 	# Sort out the grant tokens
 
-	$grant_token = api_noauth_grant_tokens_get_by_code($code);
+	$grant_token = api_oauth1_5_grant_tokens_get_by_code($code);
 
 	if (($ok) && (! $grant_token)){
 		$error = "invalid_grant 1";
@@ -84,7 +82,7 @@
 		$ok = 0;
 	}
 
-	if (($ok) && (! api_noauth_grant_tokens_is_timely($grant_token))){
+	if (($ok) && (! api_oauth1_5_grant_tokens_is_timely($grant_token))){
 		$error = "invalid_grant 4";
 		$ok = 0;
 	}
@@ -108,18 +106,18 @@
 
 	# Purge the grant
 
-	api_noauth_grant_tokens_delete($grant_token);
+	api_oauth1_5_grant_tokens_delete($grant_token);
 
 	# Generate the access token (check to make sure one doesn't already exist)
 
-	$access_token = api_noauth_access_tokens_get_for_user_and_key($user, $key_row);
+	$access_token = api_oauth1_5_access_tokens_get_for_user_and_key($user, $key_row);
 
 	if (! $access_token){
 
 		$perms = $grant_token['perms'];
 		$ttl = $grant_token['ttl'];
 
-		$rsp = api_noauth_access_tokens_create($key_row, $user, $perms, $ttl);
+		$rsp = api_oauth1_5_access_tokens_create($key_row, $user, $perms, $ttl);
 
 		if (! $rsp['ok']){
 
@@ -133,7 +131,7 @@
 
 	# Okay, soup for you!
 
-	$perms_map = api_noauth_access_tokens_permissions_map();
+	$perms_map = api_oauth1_5_access_tokens_permissions_map();
 	$scope = $perms_map[$access_token['perms']];
 
 	$rsp = array(

@@ -1,7 +1,5 @@
 <?php
 
-	# noauth - as in "not oauth"
-
 	include("include/init.php");
 
 	features_ensure_enabled("api");
@@ -10,7 +8,7 @@
 
 	loadlib("api_keys");
 	loadlib("api_keys_utils");
-	loadlib("api_noauth_access_tokens");
+	loadlib("api_oauth1_5_access_tokens");
 
 	# First get the API key
 	
@@ -26,7 +24,7 @@
 
 	# Now the token for the user + key combo
 
-	$token_row = api_noauth_access_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row);
+	$token_row = api_oauth1_5_access_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row);
 
 	if (! $token_row){
 		error_404();
@@ -52,13 +50,13 @@
 		$conf = post_str("confirm");
 
 		if ($conf){
-			$rsp = api_noauth_access_tokens_delete($token_row);
+			$rsp = api_oauth1_5_access_tokens_delete($token_row);
 			$GLOBALS['smarty']->assign_by_ref("delete_rsp", $rsp);
 		}		
 
 		$GLOBALS['smarty']->assign_by_ref("token", $token_row);
 
-		$GLOBALS['smarty']->display("page_api_noauth_token_delete.txt");
+		$GLOBALS['smarty']->display("page_api_oauth1_5_token_delete.txt");
 		exit();
 	}
 
@@ -66,7 +64,7 @@
 
 		$perms = post_str("perms");
 
-		if (! api_noauth_access_tokens_is_valid_permission($perms)){
+		if (! api_oauth1_5_access_tokens_is_valid_permission($perms)){
 			$GLOBALS['smarty']->assign("error", "bad_perms");
 		}
 
@@ -86,7 +84,7 @@
 				}
 			}
 
-			$update_rsp = api_noauth_access_tokens_update($token_row, $update);
+			$update_rsp = api_oauth1_5_access_tokens_update($token_row, $update);
 			$GLOBALS['smarty']->assign_by_ref("update_rsp", $update_rsp);
 
 			if ($update_rsp['ok']){
@@ -99,12 +97,12 @@
 
 	$GLOBALS['smarty']->assign_by_ref("token", $token_row);
 
-	$perms_map = api_noauth_access_tokens_permissions_map();
+	$perms_map = api_oauth1_5_access_tokens_permissions_map();
 	$GLOBALS['smarty']->assign_by_ref("permissions", $perms_map);
 
-	$ttl_map = api_noauth_access_tokens_ttl_map();
+	$ttl_map = api_oauth1_5_access_tokens_ttl_map();
 	$GLOBALS['smarty']->assign_by_ref("ttl_map", $ttl_map);
 
-	$GLOBALS['smarty']->display("page_api_noauth_token.txt");
+	$GLOBALS['smarty']->display("page_api_oauth1_5_token.txt");
 	exit();
 ?>

@@ -1,7 +1,5 @@
 <?php
 
-	# noauth - as in "not oauth"
-
 	# This is a little piece of syntactic sugar for logged-in users.
 	#
 	# So all this page does is mint a brand new key and access token
@@ -18,15 +16,15 @@
 	login_ensure_loggedin();
 
 	loadlib("api_keys");
-	loadlib("api_noauth_access_tokens");
+	loadlib("api_oauth1_5_access_tokens");
 
 	$crumb_key = 'access_token_authenticate_like_magic';
 	$GLOBALS['smarty']->assign("crumb_key", $crumb_key);
 
-	$perms_map = api_noauth_access_tokens_permissions_map();
+	$perms_map = api_oauth1_5_access_tokens_permissions_map();
 	$GLOBALS['smarty']->assign_by_ref("permissions", $perms_map);
 
-	$ttl_map = api_noauth_access_tokens_ttl_map();
+	$ttl_map = api_oauth1_5_access_tokens_ttl_map();
 	$GLOBALS['smarty']->assign_by_ref("ttl_map", $ttl_map);
 
 	$step = 1;
@@ -45,7 +43,7 @@
 			$ok = 0;
 		}
 
-		if (($ok) && (! api_noauth_access_tokens_is_valid_permission($perms))){
+		if (($ok) && (! api_oauth1_5_access_tokens_is_valid_permission($perms))){
 			$GLOBALS['smarty']->assign("error", "bad_perms");
 			$ok = 0;
 		}
@@ -76,7 +74,7 @@
 
 			if ($ok){
 
-				$rsp = api_noauth_access_tokens_create($key, $GLOBALS['cfg']['user'], $perms, $ttl);
+				$rsp = api_oauth1_5_access_tokens_create($key, $GLOBALS['cfg']['user'], $perms, $ttl);
 				$token = $rsp['token'];
 		
 				if (! $rsp['ok']){
@@ -93,7 +91,7 @@
 
 	$GLOBALS['smarty']->assign("step", $step);
 
-	$GLOBALS['smarty']->display("page_api_noauth_authenticate_like_magic.txt");
+	$GLOBALS['smarty']->display("page_api_oauth1_5_authenticate_like_magic.txt");
 	exit();
 
 ?>

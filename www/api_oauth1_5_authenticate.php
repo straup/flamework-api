@@ -1,7 +1,5 @@
 <?php
 
-	# noauth - as in "not oauth"
-
 	include("include/init.php");
 
 	features_ensure_enabled("api");
@@ -11,8 +9,8 @@
 
 	loadlib("api_keys");
 	loadlib("api_keys_utils");
-	loadlib("api_noauth_access_tokens");
-	loadlib("api_noauth_grant_tokens");
+	loadlib("api_oauth1_5_access_tokens");
+	loadlib("api_oauth1_5_grant_tokens");
 
 	$key_row = api_keys_utils_get_from_url();
 	$GLOBALS['smarty']->assign_by_ref("key", $key_row);
@@ -20,10 +18,10 @@
 	$crumb_key = 'access_token_register';
 	$GLOBALS['smarty']->assign("crumb_key", $crumb_key);
 
-	$perms_map = api_noauth_access_tokens_permissions_map();
+	$perms_map = api_oauth1_5_access_tokens_permissions_map();
 	$GLOBALS['smarty']->assign_by_ref("permissions", $perms_map);
 
-	$ttl_map = api_noauth_access_tokens_ttl_map();
+	$ttl_map = api_oauth1_5_access_tokens_ttl_map();
 	$GLOBALS['smarty']->assign_by_ref("ttl_map", $ttl_map);
 
 	# Handy helper mode to create auth tokens for yourself...
@@ -36,7 +34,7 @@
 			error_403();
 		}
 
-		if ($token_row = api_noauth_access_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row)){
+		if ($token_row = api_oauth1_5_access_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row)){
 			$GLOBALS['smarty']->assign_by_ref("token_row", $token_row);
 			$GLOBALS['smarty']->assign("has_token", 1);
 		}
@@ -46,19 +44,19 @@
 			$perms = request_str("perms");
 			$ttl = request_int32("ttl");
 
-			if (! api_noauth_access_tokens_is_valid_permission($perms)){
+			if (! api_oauth1_5_access_tokens_is_valid_permission($perms)){
 				$GLOBALS['smarty']->assign("error", "bad_perms");
 			}
 
 			else {
-				$rsp = api_noauth_access_tokens_create($key_row, $GLOBALS['cfg']['user'], $perms, $ttl);
+				$rsp = api_oauth1_5_access_tokens_create($key_row, $GLOBALS['cfg']['user'], $perms, $ttl);
 				$GLOBALS['smarty']->assign_by_ref("token_rsp", $rsp);
 			}
 		}
 
 		else {}
 
-		$GLOBALS['smarty']->display("page_api_noauth_authenticate_self.txt");
+		$GLOBALS['smarty']->display("page_api_oauth1_5_authenticate_self.txt");
 		exit();
 	}
 
@@ -68,7 +66,7 @@
 
 	$scope = request_str("scope");
 
-	if (($ok) && (! api_noauth_access_tokens_is_valid_permission($scope, "string perms"))){
+	if (($ok) && (! api_oauth1_5_access_tokens_is_valid_permission($scope, "string perms"))){
 		$GLOBALS['smarty']->assign("error", "invalid_scope");
 		$ok = 0;
 	}
@@ -89,9 +87,9 @@
 	# moved in to a function or something. But for now it's fine...
 	# (20121024/straup)
 
-	if (($ok) && ($token = api_noauth_grant_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row))){
+	if (($ok) && ($token = api_oauth1_5_grant_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row))){
 
-		if (api_noauth_grant_tokens_is_timely($token)){
+		if (api_oauth1_5_grant_tokens_is_timely($token)){
 
 			$rsp_params = array(
 				'code' => $token['code']
@@ -108,15 +106,15 @@
 		}
 
 		else {
-			api_noauth_grant_tokens_delete($token);
+			api_oauth1_5_grant_tokens_delete($token);
 		}
 	}
 
 	# Do we already have an access token (with the same perms) for this user?
 
-	if (($ok) && ($token_row = api_noauth_access_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row))){
+	if (($ok) && ($token_row = api_oauth1_5_access_tokens_get_for_user_and_key($GLOBALS['cfg']['user'], $key_row))){
 
-		$perms_map = api_noauth_access_tokens_permissions_map("string keys");
+		$perms_map = api_oauth1_5_access_tokens_permissions_map("string keys");
 		$perms = $perms_map[$scope];
 
 		# If we do just automagically create a stub grant so that the app
@@ -125,7 +123,7 @@
 
 		if ($perms == $token_row['perms']){
 
-			$rsp = api_noauth_grant_tokens_create($key_row, $GLOBALS['cfg']['user'], $perms);
+			$rsp = api_oauth1_5_grant_tokens_create($key_row, $GLOBALS['cfg']['user'], $perms);
 
 			$rsp_params = array();
 
@@ -156,14 +154,14 @@
 
 		if (post_str("confirm") == "YES, I AGREE"){
 
-			$perms_map = api_noauth_access_tokens_permissions_map("string keys");
+			$perms_map = api_oauth1_5_access_tokens_permissions_map("string keys");
 			$perms = $perms_map[$scope];
 
 			$ttl = post_int32("ttl");
 
 			# create grant token 
 
-			$rsp = api_noauth_grant_tokens_create($key_row, $GLOBALS['cfg']['user'], $perms, $ttl);
+			$rsp = api_oauth1_5_grant_tokens_create($key_row, $GLOBALS['cfg']['user'], $perms, $ttl);
 
 			if (! $rsp['ok']){
 				$rsp_param['error'] = 'server_error';
@@ -193,7 +191,7 @@
 		$GLOBALS['smarty']->assign("str_perms", $scope);
 	}
 
-	$GLOBALS['smarty']->display("page_api_noauth_authenticate.txt");
+	$GLOBALS['smarty']->display("page_api_oauth1_5_authenticate.txt");
 	exit();
 
 ?>

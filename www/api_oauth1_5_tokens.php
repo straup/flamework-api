@@ -1,11 +1,9 @@
 <?php
 
-	# noauth - as in "not oauth"
-
 	include("include/init.php");
 
 	loadlib("api_keys");
-	loadlib("api_noauth_access_tokens");
+	loadlib("api_oauth1_5_access_tokens");
 
 	features_ensure_enabled("api");
 
@@ -17,7 +15,7 @@
 		$more['page'] = $page;
 	}
 
-	$rsp = api_noauth_access_tokens_for_user($GLOBALS['cfg']['user'], $more);
+	$rsp = api_oauth1_5_access_tokens_for_user($GLOBALS['cfg']['user'], $more);
 	$tokens = array();
 
 	foreach ($rsp['rows'] as $row){
@@ -28,10 +26,10 @@
 
 	$GLOBALS['smarty']->assign_by_ref("tokens", $tokens);
 
-	$perms_map = api_noauth_access_tokens_permissions_map();
+	$perms_map = api_oauth1_5_access_tokens_permissions_map();
 	$GLOBALS['smarty']->assign_by_ref("permissions", $perms_map);
 
-	$GLOBALS['smarty']->display("page_api_noauth_tokens.txt");
+	$GLOBALS['smarty']->display("page_api_oauth1_5_tokens.txt");
 	exit();
 
 ?>

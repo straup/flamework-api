@@ -1,12 +1,10 @@
 <?php
 
-	# noauth - as in "not oauth"
-
 	#################################################################
 
-	function api_noauth_grant_tokens_get_by_code($code){
+	function api_oauth1_5_grant_tokens_get_by_code($code){
 
-		$cache_key = "noauth_grant_token_{$code}";
+		$cache_key = "oauth1_5_grant_token_{$code}";
 		$cache = cache_get($cache_key);
 
 		if ($cache['ok']){
@@ -15,7 +13,7 @@
 
 		$enc_code = AddSlashes($code);
 
-		$sql = "SELECT * FROM NOAuthGrantTokens WHERE code='{$enc_code}'";
+		$sql = "SELECT * FROM Oauth1_5GrantTokens WHERE code='{$enc_code}'";
 
 		$rsp = db_fetch($sql);
 		$row = db_single($rsp);
@@ -29,9 +27,9 @@
 
 	#################################################################
 
-	function api_noauth_grant_tokens_get_for_user_and_key(&$user, &$key){
+	function api_oauth1_5_grant_tokens_get_for_user_and_key(&$user, &$key){
 
-		$cache_key = "noauth_grant_token_uk_{$user['id']}_{$key['id']}";
+		$cache_key = "oauth1_5_grant_token_uk_{$user['id']}_{$key['id']}";
 		$cache = cache_get($cache_key);
 
 		if ($cache['ok']){
@@ -41,7 +39,7 @@
 		$enc_user = AddSlashes($user['id']);
 		$enc_key = AddSlashes($key['id']);
 
-		$sql = "SELECT * FROM NOAuthGrantTokens WHERE user_id='{$enc_user}' AND api_key_id='{$enc_key}'";
+		$sql = "SELECT * FROM Oauth1_5GrantTokens WHERE user_id='{$enc_user}' AND api_key_id='{$enc_key}'";
 
 		$rsp = db_fetch($sql);
 		$row = db_single($rsp);
@@ -55,9 +53,9 @@
 
 	#################################################################
 
-	function api_noauth_grant_tokens_create(&$key, &$user, $perms, $ttl=0){
+	function api_oauth1_5_grant_tokens_create(&$key, &$user, $perms, $ttl=0){
 
-		$code = api_noauth_grant_tokens_generate_code();
+		$code = api_oauth1_5_grant_tokens_generate_code();
 		$now = time();
 
 		$token = array(
@@ -75,7 +73,7 @@
 			$insert[$k] = AddSlashes($v);
 		}
 
-		$rsp = db_insert('NOAuthGrantTokens', $insert);
+		$rsp = db_insert('Oauth1_5GrantTokens', $insert);
 
 		if ($rsp['ok']){
 			$rsp['token'] = $token;
@@ -86,15 +84,15 @@
 
 	#################################################################
 
-	function api_noauth_grant_tokens_delete(&$token){
+	function api_oauth1_5_grant_tokens_delete(&$token){
 
 		$enc_code = AddSlashes($token['code']);
 
-		$sql = "DELETE FROM NOAuthGrantTokens WHERE code='{$enc_code}'";
+		$sql = "DELETE FROM Oauth1_5GrantTokens WHERE code='{$enc_code}'";
 		$rsp = db_write($sql);
 
 		if ($rsp['ok']){
-			api_noauth_grant_tokens_purge_cache($token);
+			api_oauth1_5_grant_tokens_purge_cache($token);
 		}
 	
 		return $rsp;
@@ -102,11 +100,11 @@
 
 	#################################################################
 
-	function api_noauth_grant_tokens_purge_cache(&$token){
+	function api_oauth1_5_grant_tokens_purge_cache(&$token){
 
 		$cache_keys = array(
-			"noauth_grant_token_{$token['code']}",
-			"noauth_grant_token_uk_{$token['user_id']}_{$token['api_key_id']}",
+			"oauth1_5_grant_token_{$token['code']}",
+			"oauth1_5_grant_token_uk_{$token['user_id']}_{$token['api_key_id']}",
 		);
 
 		foreach ($cache_keys as $key){
@@ -116,14 +114,14 @@
 
 	#################################################################
 
-	function api_noauth_grant_tokens_purge(){
+	function api_oauth1_5_grant_tokens_purge(){
 
-		$then = api_noauth_grant_tokens_min_age();
+		$then = api_oauth1_5_grant_tokens_min_age();
 
 		# TO DO: purge caches - iterate over all the keys?
 		# (20121103/straup)
 
-		$sql = "DELETE FROM NOAuthGrantTokens WHERE created <= {$then}";
+		$sql = "DELETE FROM Oauth1_5GrantTokens WHERE created <= {$then}";
 		$rsp = db_write($sql);
 
 		return $rsp;
@@ -131,14 +129,14 @@
 
 	#################################################################
 
-	function api_noauth_grant_tokens_generate_code(){
+	function api_oauth1_5_grant_tokens_generate_code(){
 		$key = md5(random_string(100) . time());
 		return $key;		
 	}
 
 	#################################################################
 
-	function api_noauth_grant_tokens_min_age(){
+	function api_oauth1_5_grant_tokens_min_age(){
 
 		$now = time();
 		$then = $now - (60 * 5);
@@ -148,9 +146,9 @@
 
 	#################################################################
 
-	function api_noauth_grant_tokens_is_timely(&$token){
+	function api_oauth1_5_grant_tokens_is_timely(&$token){
 
-		$min_age = api_noauth_grant_tokens_min_age();
+		$min_age = api_oauth1_5_grant_tokens_min_age();
 		$ok = ($token['created'] > $min_age) ? 1 : 0;
 
 		return $ok;

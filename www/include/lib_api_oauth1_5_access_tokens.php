@@ -1,13 +1,11 @@
 <?php
 
-	# noauth - as in "not oauth"
-
 	#################################################################
 
 	# TO DO: put me in the config?
 	# (20121103/straup)
 
-	function api_noauth_access_tokens_permissions_map($string_keys=0){
+	function api_oauth1_5_access_tokens_permissions_map($string_keys=0){
 
 		$map = array(
 			'0' => 'login',
@@ -24,7 +22,7 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_ttl_map($string_keys=0){
+	function api_oauth1_5_access_tokens_ttl_map($string_keys=0){
 
 		$map = array(
 			'0' => 'until I revoke it',
@@ -44,16 +42,16 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_is_valid_permission($perm, $str_perm=0){
-		$map = api_noauth_access_tokens_permissions_map($str_perm);
+	function api_oauth1_5_access_tokens_is_valid_permission($perm, $str_perm=0){
+		$map = api_oauth1_5_access_tokens_permissions_map($str_perm);
 		return (isset($map[$perm])) ? 1 : 0;
 	}
 
 	#################################################################
 
-	function api_noauth_access_tokens_get_by_token($token){
+	function api_oauth1_5_access_tokens_get_by_token($token){
 
-		$cache_key = "noauth_access_token_{$token}";
+		$cache_key = "oauth1_5_access_token_{$token}";
 		$cache = cache_get($cache_key);
 
 		if ($cache['ok']){
@@ -62,7 +60,7 @@
 
 		$enc_token = AddSlashes($token);
 
-		$sql = "SELECT * FROM NoauthAccessTokens WHERE access_token='{$enc_token}'";
+		$sql = "SELECT * FROM Oauth1_5AccessTokens WHERE access_token='{$enc_token}'";
 		$rsp = db_fetch($sql);
 		$row = db_single($rsp);
 
@@ -75,11 +73,11 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_for_user(&$user, $more=array()){
+	function api_oauth1_5_access_tokens_for_user(&$user, $more=array()){
 
 		$enc_user = AddSlashes($user['id']);
 
-		$sql = "SELECT * FROM NoauthAccessTokens WHERE user_id='{$enc_user}' AND (expires=0 OR expires > UNIX_TIMESTAMP(NOW())) ORDER BY created DESC";
+		$sql = "SELECT * FROM Oauth1_5AccessTokens WHERE user_id='{$enc_user}' AND (expires=0 OR expires > UNIX_TIMESTAMP(NOW())) ORDER BY created DESC";
 		$rsp = db_fetch_paginated($sql, $more);
 
 		return $rsp;		
@@ -87,11 +85,11 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_for_key(&$key, $more=array()){
+	function api_oauth1_5_access_tokens_for_key(&$key, $more=array()){
 
 		$enc_key = AddSlashes($key['id']);
 
-		$sql = "SELECT * FROM NoauthAccessTokens WHERE api_key_id='{$enc_key}' AND (expires=0 OR expires > UNIX_TIMESTAMP(NOW())) ORDER BY created DESC";
+		$sql = "SELECT * FROM Oauth1_5AccessTokens WHERE api_key_id='{$enc_key}' AND (expires=0 OR expires > UNIX_TIMESTAMP(NOW())) ORDER BY created DESC";
 		$rsp = db_fetch_paginated($sql, $more);
 
 		return $rsp;		
@@ -99,21 +97,21 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_count_for_key(&$key){
+	function api_oauth1_5_access_tokens_count_for_key(&$key){
 
 		$more = array(
 			'per_page' => 1,
 		);
 
-		$rsp = api_noauth_access_tokens_for_key($key, $more);
+		$rsp = api_oauth1_5_access_tokens_for_key($key, $more);
 		return $rsp['pagination']['total_count'];
 	}
 
 	#################################################################
 
-	function api_noauth_access_tokens_get_for_user_and_key(&$user, &$key){
+	function api_oauth1_5_access_tokens_get_for_user_and_key(&$user, &$key){
 
-		$cache_key = "noauth_access_token_uk_{$user['id']}_{$key['id']}";
+		$cache_key = "oauth1_5_access_token_uk_{$user['id']}_{$key['id']}";
 		$cache = cache_get($cache_key);
 
 		if ($cache['ok']){
@@ -123,7 +121,7 @@
 		$enc_user = AddSlashes($user['id']);
 		$enc_key = AddSlashes($key['id']);
 
-		$sql = "SELECT * FROM NoauthAccessTokens WHERE user_id='{$enc_user}' AND api_key_id='{$enc_key}'  AND (expires=0 OR expires > UNIX_TIMESTAMP(NOW()))";
+		$sql = "SELECT * FROM Oauth1_5AccessTokens WHERE user_id='{$enc_user}' AND api_key_id='{$enc_key}'  AND (expires=0 OR expires > UNIX_TIMESTAMP(NOW()))";
 
 		$rsp = db_fetch($sql);
 		$row = db_single($rsp);
@@ -137,11 +135,11 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_create(&$key, &$user, $perms, $ttl=0){
+	function api_oauth1_5_access_tokens_create(&$key, &$user, $perms, $ttl=0){
 
 		$id = dbtickets_create(64);
 
-		$token = api_noauth_access_tokens_generate_token();
+		$token = api_oauth1_5_access_tokens_generate_token();
 		$now = time();
 
 		$row = array(
@@ -164,7 +162,7 @@
 			$insert[$k] = AddSlashes($v);
 		}
 
-		$rsp = db_insert('NoauthAccessTokens', $insert);
+		$rsp = db_insert('Oauth1_5AccessTokens', $insert);
 
 		if ($rsp['ok']){
 			$rsp['token'] = $row;
@@ -175,7 +173,7 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_update(&$token, $update){
+	function api_oauth1_5_access_tokens_update(&$token, $update){
 
 		$update['last_modified'] = time();
 
@@ -188,11 +186,11 @@
 		$enc_id = AddSlashes($token['id']);
 		$where = "id='{$enc_id}'";
 
-		$rsp = db_update('NoauthAccessTokens', $update, $where);
+		$rsp = db_update('Oauth1_5AccessTokens', $update, $where);
 
 		if ($rsp['ok']){
 
-			api_noauth_access_tokens_purge_cache($token);
+			api_oauth1_5_access_tokens_purge_cache($token);
 
 			$token = array_merge($token, $update);
 			$rsp['token'] = $token;
@@ -205,15 +203,15 @@
 
 	# THERE IS NO UNDO...
 
-	function api_noauth_access_tokens_delete(&$token){
+	function api_oauth1_5_access_tokens_delete(&$token){
 
 		$enc_id = AddSlashes($token['id']);
-		$sql = "DELETE FROM NoauthAccessTokens WHERE id='{$enc_id}'";
+		$sql = "DELETE FROM Oauth1_5AccessTokens WHERE id='{$enc_id}'";
 
 		$rsp = db_write($sql);
 
 		if ($rsp['ok']){
-			api_noauth_access_tokens_purge_cache($token);
+			api_oauth1_5_access_tokens_purge_cache($token);
 		}
 
 		return $rsp;
@@ -221,10 +219,10 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_delete_for_key(&$key){
+	function api_oauth1_5_access_tokens_delete_for_key(&$key){
 
 		$enc_key = AddSlashes($key['id']);
-		$sql = "DELETE FROM NoauthAccessTokens WHERE api_key_id='{$enc_key}'";
+		$sql = "DELETE FROM Oauth1_5AccessTokens WHERE api_key_id='{$enc_key}'";
 
 		# TO DO: purge caches - iterate over all the things?
 		# (20121103/straup)
@@ -235,11 +233,11 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_purge_cache(&$token){
+	function api_oauth1_5_access_tokens_purge_cache(&$token){
 
 		$cache_keys = array(
-			"noauth_access_token_{$token['access_token']}",
-			"noauth_access_token_uk_{$token['user_id']}_{$token['api_key_id']}",
+			"oauth1_5_access_token_{$token['access_token']}",
+			"oauth1_5_access_token_uk_{$token['user_id']}_{$token['api_key_id']}",
 		);
 
 		foreach ($cache_keys as $key){
@@ -249,7 +247,7 @@
 
 	#################################################################
 
-	function api_noauth_access_tokens_generate_token(){
+	function api_oauth1_5_access_tokens_generate_token(){
 		$token = md5(random_string(100) . time());
 		return $token;
 	}

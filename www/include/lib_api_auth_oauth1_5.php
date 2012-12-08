@@ -1,13 +1,11 @@
 <?php
 
-	# noauth - as in "not oauth"
- 
-	loadlib("api_noauth_access_tokens");
-	loadlib("api_noauth");
+	loadlib("api_oauth1_5_access_tokens");
+	loadlib("api_oauth1_5");
 
 	#################################################################
 
-	function api_auth_noauth_has_auth(&$method, $key_row=null){
+	function api_auth_oauth1_5_has_auth(&$method, $key_row=null){
 
 		$access_token = request_str("access_token");
 		$api_sig = request_str("api_sig");
@@ -20,7 +18,7 @@
 			return not_okay('Required API signature missing', 400);
 		}
 
-		$token_row = api_noauth_access_tokens_get_by_token($access_token);
+		$token_row = api_oauth1_5_access_tokens_get_by_token($access_token);
 
 		if (! $token_row){
 			return not_okay('Invalid access token', 400);

@@ -1,10 +1,8 @@
 <?php
 
-	# noauth - as in "not oauth"
-
 	#################################################################
 
-	function api_noauth_sign_arguments($args, $app_keys, $user_keys){
+	function api_oauth1_5_sign_arguments($args, $app_keys, $user_keys){
 
 		$parts = array();
 		$raw = implode("&", $parts);
@@ -18,7 +16,7 @@
 
 		# TO DO: check for native hashing function
 
-		$signed = noauth_hmac_sha1($raw, $key, TRUE);
+		$signed = api_oauth1_5_hmac_sha1($raw, $key, TRUE);
 		$signed = base64_encode($signed);
 
 		return $signed
@@ -28,7 +26,7 @@
 
 	# copied from lib_oauth.php
 
-	function noauth_hmac_sha1($data, $key, $raw=TRUE){
+	function api_oauth1_5_hmac_sha1($data, $key, $raw=TRUE){
 
 		if (strlen($key) > 64){
 			$key =  pack('H40', sha1($key));
