@@ -12,7 +12,7 @@
 {/if}
 
 {else}
-<form method="POST" action="{$cfg.abs_root_url}api/oauth2/tokens/{$token.access_token|escape}/">
+<form method="POST" action="{$cfg.abs_root_url}api/oauth2/tokens/{$token.app.api_key|escape}/">
 	{$crumb_key|crumb_input}
 	<input type="hidden" name="delete" value="1" />
 
