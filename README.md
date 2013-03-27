@@ -328,6 +328,11 @@ around the API key in URLs and not the actual access token.)
 
 This is the actual API dispatch/endpoint. Code points here.
 
+OAuth2
+--
+
+OAuth2 seemed like a good idea, at the time. It works. It is not ideal.
+
 See also
 --
 
