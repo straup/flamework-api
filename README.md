@@ -151,13 +151,13 @@ methods out of the main config.
 This allows to load API methods defined (described above) in separate PHP files
 whose naming convention is:
 
-	FLAMEWORK_INCLUDE_DIR . "/config_api_**methods**.php";
+	FLAMEWORK_INCLUDE_DIR . "/config_api_methods.php";
 
-Where the "methods" part is used to denote a particular group of method
+Where the "**methods**" part is used to denote a particular group of method
 definitions. For example:
 
 	$GLOBALS['cfg']['api_method_definitions'] = array(
-		'**methods**',
+		'methods',
 	);
 
 See the included `config_api_methods.php` for an example of this setup.
