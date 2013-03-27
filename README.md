@@ -153,7 +153,7 @@ whose naming convention is:
 
 	FLAMEWORK_INCLUDE_DIR . "/config_api_methods.php";
 
-Where the "**methods**" part is used to denote a particular group of method
+Where the **methods** part is used to denote a particular group of method
 definitions. For example:
 
 	$GLOBALS['cfg']['api_method_definitions'] = array(
