@@ -76,22 +76,22 @@
 	function api_keys_utils_is_valid_key($key_row){
 
 		if (! $key_row){
-			return not_okay(999, "Unknown API key");
+			return array('ok' => 0, 'error' => 'Unknown API key');
 		}
 
 		if ($key_row['deleted']){
-			return not_okay(999, "Invalid API key");
+			return array('ok' => 0, 'error' => 'Invalid API key');
 		}
 
 		if ($key_row['disabled']){
-			return not_okay(999, "API key is disabled");
+			return array('ok' => 0, 'error' => 'API key is disabled');
 		}
 
 		if ((features_is_enabled("api_throttling")) && (api_throttle_is_key_throttled($key_row))){
-			return not_okay(999, "API key is throttled");
+			return array('ok' => 0, 'error' => 'API key is throttled')
 		}
 
-		return okay();
+		return array('ok' => 1);
 	}
 
 	########################################################################
