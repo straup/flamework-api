@@ -2,8 +2,7 @@ flamework-api
 ==
 
 These are drop-in libraries for adding an API endpoint to a Flamework
-project. _It assumes that you are using a current version of [straup's fork of
-Flamework](https://github.com/straup/flamework)._
+project.
 
 It includes libraries and webpages for dispatching API requests and responses as
 well as creating and managing API keys.
