@@ -9,17 +9,17 @@
 		$access_token = post_str("access_token");
 
 		if (! $access_token){
-			return not_okay('Required access token missing', 400);
+			return array('ok' => 0, 'error' => 'Required access token missing', 'error_code' => 400);
 		}
 
 		$token_row = api_oauth2_access_tokens_get_by_token($access_token);
 
 		if (! $token_row){
-			return not_okay('Invalid access token', 400);
+			return array('ok' => 0, 'error' => 'Invalid access token', 'error_code' => 400);
 		}
 
 		if (($token_row['expires']) && ($token_row['expires'] < time())){
-			return not_okay('Invalid access token', 400);
+			return array('ok' => 0, 'error' => 'Invalid access token', 'error_code' => 400);
 		}
 
 		# I find it singularly annoying that we have to do this here
@@ -36,14 +36,14 @@
 		if (isset($method['requires_perms'])){
 
 			if ($token_row['perms'] < $method['requires_perms']){
-				return not_okay('Insufficient permissions', 403);
+				return array('ok' => 0, 'error' => 'Insufficient permissions', 'error_code' => 403);
 			}
 		}
 
 		$user = users_get_by_id($token_row['user_id']);
 
 		if ((! $user) || ($user['deleted'])){
-			return not_okay('Not a valid user', 400);
+			return array('ok' => 0, 'error' => 'Not a valid user', 'error_code' => 400);
 		}
 
 		return array(
