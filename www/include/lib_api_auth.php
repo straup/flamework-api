@@ -17,7 +17,7 @@
 			return 0;
 		}
 
-		if (! function_exists){
+		if (! function_exists($auth_func)){
 			return 0;
 		}
 
@@ -26,6 +26,8 @@
 		if (! $rsp['ok']){
 			api_output_error($rsp['error_code'], $rsp['error']);
 		}
+
+		return $rsp;
 	}
 
 	#################################################################
@@ -59,4 +61,4 @@
 
 	#################################################################
 
-?>
+	# the end

@@ -80,28 +80,24 @@ paginated.
 The maximum number of results to return, per page, for things that are
 paginated.
 
-config.api.json
+API method defintions
 --
 
-API methods, and related specifics, are defined using a JSON config file. A
-simple config file looks like this:
+API methods, and related specifics, are defined as a dictionary where the keys
+are method names and the values are the method details.
 
 For example:
 
-	{
-		"default_format": "json",
-		"formats": [ "json" ],
-		"methods": {
-			"api.spec.methods": {
-				"description": "Return the list of available API response methods.",
-				"documented": 1,
-				"enabled": 1,
-				"library": "api_spec"
-			}
-	}
+	$GLOBALS['cfg']['api']['methods'] => array(
+		"api.spec.methods" => array(
+			"description" => "Return the list of available API response methods.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_spec"
+		)
+	)
 
-Methods are defined as a hash (or dictionary) of hashes where the keys are
-method names and their values are a hash of method-specific details.
+Valid method details include:
 
 ### description
 
@@ -133,10 +129,40 @@ _This is not necessary to declare if you are using OAuth2._
 A boolean flag indicating whether or a method requires that a valid (Flamework)
 crumb ba passed (and validated).
 
+### requires_blessing
+
+A boolean flag indicating whether or a method requires that access to the method
+be restricted (or "blessed") by API key, access token or host.
+
+API method "blessings" are discussed in detail below.
+
 ### request_method
 
 If present then the API dispatching code will ensure that the HTTP method used
 to invoke the (API) method matches.
+
+API method defintions (and $GLOBALS['cfg']['api_method_definitions'])
+--
+
+The `$GLOBALS['cfg']['api_method_definitions']` config variable is a little
+piece of syntatic sugar and helper code to keep the growing number of API
+methods out of the main config.
+
+This allows to load API methods defined (described above) in separate PHP files
+whose naming convention is:
+
+	FLAMEWORK_INCLUDE_DIR . "/config_api_{$definition}.php";
+
+For example:
+
+	$GLOBALS['cfg']['api_method_definitions'] = array(
+		'methods',	# aka $defintion above
+	);
+
+See the included `config_api_methods.php` for an example of this setup.
+
+"Blessed" API methods
+--
 
 URLs
 --
@@ -224,5 +250,3 @@ See also
 * [flamework](https://github.com/straup/flamework)
 
 * [flamework-tools](https://github.com/straup/flamework)
-
-

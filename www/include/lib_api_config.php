@@ -4,27 +4,120 @@
 
 	function api_config_init(){
 
-		# THIS IS NOT AWESOME. PLEASE MAKE ME BETTER.
-		# (ON THE OTHER HAND, IT WORKS...)
+		foreach ($GLOBALS['cfg']['api_method_definitions'] as $def){
 
-		$api_config = FLAMEWORK_INCLUDE_DIR . "config.api.json";
-		$fh = fopen($api_config, "r");
+			try {
+				$path = FLAMEWORK_INCLUDE_DIR . "/config_api_{$def}.php";
+				include_once($path);
+			}
 
-		if (! $fh){
-			_api_config_freakout_and_die();
+			catch (Exception $e){
+				# $msg = $e->getMessage();
+				_api_config_freakout_and_die();
+			}
 		}
 
-		$data = fread($fh, filesize($api_config));
-		fclose($fh);
+		api_config_apply_blessings();
+	}
 
-		$api_config = json_decode($data, "as hash");
+	#################################################################
 
-		if (! $api_config){
-			_api_config_freakout_and_die();
+	function api_config_apply_blessings(){
+
+		foreach ($GLOBALS['cfg']['api']['blessings'] as $api_key => $key_details){
+
+			$blessing_defaults = array();
+
+			foreach (array('hosts', 'tokens', 'environments') as $prop){
+				if (isset($key_details[$prop])){
+					$blessing_defaults[$prop] = $key_details[$prop];
+				}
+			}
+
+			if (is_array($key_details['method_classes'])){
+
+				foreach ($key_details['method_classes'] as $class_spec => $blessing_details){
+
+					foreach ($GLOBALS['cfg']['api']['methods'] as $method_name => $method_details){
+
+						if (! $method_details['requires_blessing']){
+							continue;
+						}
+
+						if (! preg_match("/^{$class_spec}/", $method_name)){
+							continue;
+						}
+
+						$blessing = array_merge($blessing_defaults, $blessing_details);
+						_api_config_apply_blessing($method_name, $api_key, $blessing);
+					}
+				}
+			}
+
+			if (is_array($key_details['methods'])){
+
+				foreach ($key_details['methods'] as $method_name => $blessing_details){
+
+					$blessing = array_merge($blessing_defaults, $blessing_details);
+					_api_config_apply_blessing($method_name, $api_key, $blessing);
+				}
+			}
+		}
+	}
+
+ 	#################################################################
+
+	function _api_config_apply_blessing($method_name, $api_key, $blessing=array()){
+
+		if (! is_array($GLOBALS['cfg']['api']['methods'][$method_name]['blessings'])){
+			$GLOBALS['cfg']['api']['methods'][$method_name]['blessings'] = array();
 		}
 
-		$GLOBALS['cfg']['api'] = $api_config;
+		$GLOBALS['cfg']['api']['methods'][$method_name]['blessings'][$api_key] = $blessing;
+	}
 
+	#################################################################
+
+	function api_config_ensure_blessing($method_row, $key_row, $token_row=null){
+
+		if (isset($method_row['requires_blessing'])){
+
+			$blessings = $method_row['blessings'];
+			$api_key = $key_row['api_key'];
+
+			if (! isset($blessings[$api_key])){
+				api_output_error(403, "Invalid API key");
+			}
+
+			$details = $blessings[$api_key];
+
+			if (isset($details['environments'])){
+
+				if (! in_array($GLOBALS['cfg']['environment'], $details['environments'])){
+					api_output_error(403, 'Invalid host environment');
+				}
+			}
+
+			if (isset($details['hosts'])){
+
+				if (! in_array($_SERVER['REMOTE_ADDR'], $details['hosts'])){
+					api_output_error(403, "Invalid host: '{$_SERVER['REMOTE_ADDR']}'");
+				}
+			}
+
+			if (isset($details['tokens'])){
+
+				if (! $token_row){
+					api_output_error(403, 'Invalid token');
+				}
+
+				if (! in_array($token_row['access_tokens'], $details['tokens'])){
+					api_output_error(403, 'Invalid token');
+				}
+			}
+		}
+
+		return 1;
 	}
 
 	#################################################################
@@ -52,4 +145,5 @@
 	}
 
 	#################################################################
-?>
+
+	# the end
