@@ -47,6 +47,9 @@
 
 		$method_row = $methods[$method];
 
+		$key_row = null;
+		$token_row = null;
+
 		if (! $method_row['enabled']){
 			$enc_method = htmlspecialchars($method);
 			api_output_error(404, "Method '{$enc_method}' not found");
@@ -57,7 +60,7 @@
 		if ($GLOBALS['cfg']['api_auth_type'] == 'oauth2'){
 
 			if ($_SERVER['REQUEST_METHOD'] != 'POST'){
-				api_output_error(405, 'Method not allowed');
+			 	api_output_error(405, 'Method not allowed');
 			}
 		}
 
@@ -76,8 +79,6 @@
 
 		# First API keys
  
-		$key_row = null;
-
 		if (features_is_enabled("api_require_keys")){
 
 			if (! $api_key){
@@ -90,17 +91,25 @@
 
 		# Second auth-y bits
 
-		if ($GLOBALS['cfg']['api_auth_type'] == 'oauth2'){
-			api_auth_ensure_auth($method_row, $key_row);
+		$auth_rsp = api_auth_ensure_auth($method_row, $key_row);
+
+		if (isset($auth_rsp['api_key'])){
+			$key_row = $auth_rsp['api_key'];
 		}
 
-		else if ($method_row['requires_auth']){
-			api_auth_ensure_auth($method_row, $key_row);
+		if (isset($auth_rsp['access_token'])){
+			$token_row = $auth_rsp['access_token'];
+		}
+	
+		if ($auth_rsp['user']){
+			$GLOBALS['cfg']['user'] = $user;
 		}
 
-		else {}
+		# Third, lessings and other method specific access controls
 
-		# Crumbs... because they are tastey
+		api_config_ensure_blessing($method_row, $key_row, $token_row);
+
+		# Fourth, crumbs - because they are tastey
 
 		if ($method_row['requires_crumb']){
 			api_auth_ensure_crumb($method_row);
@@ -121,4 +130,4 @@
 
 	#################################################################
 
-?>
+	# the end
