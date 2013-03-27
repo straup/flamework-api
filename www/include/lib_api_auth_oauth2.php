@@ -46,11 +46,14 @@
 			return not_okay('Not a valid user', 400);
 		}
 
-		$GLOBALS['cfg']['api_access_token'] = $token_row;
-		$GLOBALS['cfg']['user'] = $user;
-
-		return okay();
+		return array(
+			'ok' => 1,
+			'access_token' => $token_row,
+			'api_key' => $key_row,
+			'user' => $user,
+		);
 	}
 
 	#################################################################
-?>
+
+	# the end

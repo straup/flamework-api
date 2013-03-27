@@ -2,8 +2,7 @@ flamework-api
 ==
 
 These are drop-in libraries for adding an API endpoint to a Flamework
-project. _It assumes that you are using a current version of [straup's fork of
-Flamework](https://github.com/straup/flamework)._
+project.
 
 It includes libraries and webpages for dispatching API requests and responses as
 well as creating and managing API keys.
@@ -80,28 +79,24 @@ paginated.
 The maximum number of results to return, per page, for things that are
 paginated.
 
-config.api.json
+API method defintions
 --
 
-API methods, and related specifics, are defined using a JSON config file. A
-simple config file looks like this:
+API methods, and related specifics, are defined as a dictionary where the keys
+are method names and the values are the method details.
 
 For example:
 
-	{
-		"default_format": "json",
-		"formats": [ "json" ],
-		"methods": {
-			"api.spec.methods": {
-				"description": "Return the list of available API response methods.",
-				"documented": 1,
-				"enabled": 1,
-				"library": "api_spec"
-			}
-	}
+	$GLOBALS['cfg']['api']['methods'] => array(
+		"api.spec.methods" => array(
+			"description" => "Return the list of available API response methods.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_spec"
+		)
+	)
 
-Methods are defined as a hash (or dictionary) of hashes where the keys are
-method names and their values are a hash of method-specific details.
+Valid method details include:
 
 ### description
 
@@ -121,6 +116,11 @@ A boolean flag indicating whether or not this method can be called.
 The name of the library to find the actual function that a method name
 corresponds to. All things being equal this is what will be invoked.
 
+### request_method
+
+If present then the API dispatching code will ensure that the HTTP method used
+to invoke the (API) method matches.
+
 ### requires_auth
 
 A boolean flag indicating whether or not a method requires an authorization
@@ -133,10 +133,120 @@ _This is not necessary to declare if you are using OAuth2._
 A boolean flag indicating whether or a method requires that a valid (Flamework)
 crumb ba passed (and validated).
 
-### request_method
+### requires_blessing
 
-If present then the API dispatching code will ensure that the HTTP method used
-to invoke the (API) method matches.
+A boolean flag indicating whether or a method requires that access to the method
+be restricted (or "blessed") by API key, access token or host.
+
+API method "blessings" are discussed in detail below.
+
+API method defintions (and $GLOBALS['cfg']['api_method_definitions'])
+--
+
+The `$GLOBALS['cfg']['api_method_definitions']` config variable is a little
+piece of syntatic sugar and helper code to keep the growing number of API
+methods out of the main config.
+
+This allows to load API methods defined (described above) in separate PHP files
+whose naming convention is:
+
+	FLAMEWORK_INCLUDE_DIR . "/config_api_methods.php";
+
+Where the **methods** part is used to denote a particular group of method
+definitions. For example:
+
+	$GLOBALS['cfg']['api_method_definitions'] = array(
+		'methods',
+	);
+
+See the included `config_api_methods.php` for an example of this setup.
+
+"Blessed" API methods
+--
+
+"Blessed" API methods are those methods with one or more access controls on
+them. Access controls are always based on API keys and may also be further
+locked down by API access token, host (the remote address of the client calling
+the API method) and by Flamework "environment".
+
+API blessings are defined in `$GLOBALS['cfg']['api']['blessings']` setting. For
+example:
+
+	$GLOBALS['cfg']['api']['blessings'] => array(
+		'xxx-apikey' => array(
+			'hosts' => array('127.0.0.1'),
+			# 'tokens' => array(),
+			# 'environments' => array(),
+			'methods' => array(
+				'foo.bar.baz' => array(
+					'environments' => array('sd-931')
+				)
+			),
+			'method_classes' => array(
+				'foo.bar' => array(
+					# see above
+				)
+			),
+		),
+	);
+
+Each definition is keyed (no pun intended) by an API key whose value is a
+dictionary containing some or all of the following properties:
+
+### methods
+
+A list of dictionaries (or hashes) that define the API methods that this key has
+been blessed to access.
+
+Each dictionary is keyed by a fully qualified method name whose value is an
+array that may be empty or contain one or more of the following properties:
+hosts, tokens, environments (described in detail below).
+
+### method_classes
+
+A list of dictionaries (or hashes) that define a group of API methods that this
+key has been blessed to access.
+
+Each dictionary is keyed by one or more leading parts of a method name, or a
+"class". For example if you wanted to grant access to all the methods in the
+`foo.bar` class of methods (`foo.bar.baz`, `foo.bar.helloworld` and so one) to
+an API key you would say: 
+
+	'foo.bar' => array()
+
+The value for each key (class) is an array that may be empty or contain one or
+more of the following properties: hosts, tokens, environments (described in
+detail below).
+
+### hosts
+
+A list of IP addresses (in addition to a specific API key) allowed to access a
+given API method.
+
+If defined in the scope of an API key these restrictions will apply to all child
+method and method class definitions. Note if this key is defined as a empty list
+no requests will be granted access to its corresponding API method.
+
+### tokens
+
+A list of API access tokens (in addition to a specific API key) allowed to
+access a given API method.
+
+If defined in the scope of an API key these restrictions will apply to all child
+method and method class definitions. Note if this key is defined as a empty list
+no requests will be granted access to its corresponding API method.
+
+### environments
+
+A list of Flamework "environment" names (in addition to a specific API key)
+allowed to access a given API method. Which means this API method will only be
+accessible on a list of servers that self-identify with this name.
+
+Environment names are defined in the `$GLOBALS['cfg']['environment']` setting.
+
+If defined in the scope of an API key these restrictions will apply to all child
+method and method class definitions. Note if this key is defined as a empty list
+no requests will be granted access to its corresponding API method.
 
 URLs
 --
@@ -224,5 +334,3 @@ See also
 * [flamework](https://github.com/straup/flamework)
 
 * [flamework-tools](https://github.com/straup/flamework)
-
-
