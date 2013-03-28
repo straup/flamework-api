@@ -71,7 +71,7 @@
 		# We're defining methods using the method_definitions
 		# hooks defined below to minimize the clutter in the
 		# main config file, aka this one (20130308/straup)
-		'methods' => array()
+		'methods' => array(),
 
 		# We are NOT doing the same for blessed API keys since
 		# it's expected that their number will be small and

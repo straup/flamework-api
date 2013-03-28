@@ -88,7 +88,7 @@
 		}
 
 		if ((features_is_enabled("api_throttling")) && (api_throttle_is_key_throttled($key_row))){
-			return array('ok' => 0, 'error' => 'API key is throttled')
+			return array('ok' => 0, 'error' => 'API key is throttled');
 		}
 
 		return array('ok' => 1);
