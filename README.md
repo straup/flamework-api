@@ -333,6 +333,11 @@ OAuth2
 
 OAuth2 seemed like a good idea, at the time. It works. It is not ideal.
 
+To do
+--
+
+* A good web-based API explorer
+ 
 See also
 --
 
