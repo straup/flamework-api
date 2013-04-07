@@ -15,7 +15,11 @@
 	loadlib("api_oauth2_access_tokens");
 	loadlib("api_oauth2_grant_tokens");
 
-	$key_row = api_keys_utils_get_from_url();
+	$key_more = array(
+		'ensure_isown' => 0
+	);
+
+	$key_row = api_keys_utils_get_from_url($key_more);
 	$GLOBALS['smarty']->assign_by_ref("key", $key_row);
 
 	$crumb_key = 'access_token_register';
@@ -105,7 +109,9 @@
 			$rsp_params = http_build_query($rsp_params);
 
 			$url = $key_row['app_callback'] . "?" . $rsp_params;
-			urls_redirect($url);
+
+			header("location: {$url}");
+			exit();
 		}
 
 		else {
@@ -145,7 +151,9 @@
 			$rsp_params = http_build_query($rsp_params);
 
 			$url = $key_row['app_callback'] . "?" . $rsp_params;
-			urls_redirect($url);
+
+			header("location: {$url}");
+			exit();
 		}
 	}
 
@@ -187,7 +195,9 @@
 		$rsp_params = http_build_query($rsp_params);
 
 		$url = $key_row['app_callback'] . "?" . $rsp_params;
-		urls_redirect($url);
+
+		header("location: {$url}");
+		exit();
 	}
 
 	if ($ok){
