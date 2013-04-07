@@ -10,12 +10,13 @@
 	color: #333;
 	border-bottom: 1px dotted #ccc;
 	text-align: right;
+	display:none;
 }
 
 #api-header h2 {
 	margin-top: 0;
-	font-weight: 100;
-	font-size: small;
+	font-weight: 500;
+	font-size: medium;
 	color: #666;
 	text-align: right;
 }
@@ -24,10 +25,7 @@
     padding: 50px;
     margin-left: auto;
     margin-right: auto;
-    font-size: 1.5em;
-}
-
-.api-key-or-token tr {
+    min-width:70%;
 }
 
 .api-key-or-token td {
@@ -35,32 +33,26 @@
     padding-left:20px;
 }
 
-.api-key-or-token select {
-    font-size: 1.1em;
-    padding: 5px;
-}
-
-.api-key-or-token input {
-    font-size: 1.2em;
-    font-weight:100;
-    padding: 5px;
+.api-key-or-token input[type=text]{
+    width:90%;
 }
 
 .api-key-or-token textarea {
-    font-size: 1.1em;
-    font-weight:100;
+    width:90%;
     padding: 10px;
 }
 
 .api-key-or-token tr td:first-child {
     font-weight: 700;
     background-color: #adadad;
+    color:#fff;
     vertical-align:text-top;
+    font-size: 1.5em;
 }
 
-.api-admin td {
-    background-color: #fff !important;
-    text-align:right;
+label {
+    display: inline !important;
+    font-size:medium;
 }
 
 .api-credential {
@@ -104,4 +96,53 @@
 .api-permissions-glossary p {
     font-style: italic;
     margin-left: 8%;
+}
+
+.api-example-response {
+    max-height: 600px;
+    overflow:scroll !important;
+    x-overflow:none;
+}
+
+.api-list-o-things {
+    margin-bottom: 1em;
+}
+
+.api-list-o-things li {
+    line-height: 1.4em !important;
+    margin-bottom: .5em;
+    color: #333;
+}
+
+.api-sect {
+    margin-bottom: 2em;
+}
+
+.api-sect h2 {
+    margin-bottom: .75em;
+}
+
+.api-required {
+    font-weight: 700;
+    color:red;
+}
+
+.api-required:before {
+    content: "[ ";
+}
+
+.api-required:after {
+    content: " ]";
+}
+
+.api-caveat {
+    font-size: small;
+}
+
+.api-thisisyou {
+    color: #ccc;
+}
+
+.api-details {
+    font-size:small;
 }
