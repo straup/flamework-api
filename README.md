@@ -15,6 +15,8 @@ You can either install all of the files manually or you can the `bin/setup.sh`
 script which will install most of the relevant bits automatically and make a
 note of the stuff you'll see need to do yourself.
 
+**Note:** The documentation below is a bit our of date (as of 20130409) and will be updated shortly.
+
 config.php
 --
 
