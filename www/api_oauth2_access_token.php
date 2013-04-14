@@ -44,7 +44,7 @@
 
 	# Basics (redirect URLs)
 
-	if (($ok) && (request_str("redirect_uri") != $key_row['app_callback'])){
+	if (($ok) && (! $key_row['app_callback'])){
 		error_403();
 	}
 
@@ -145,11 +145,8 @@
 		'access_token' => $access_token['access_token'],
 		# 'token_type' => 'OMGWTF... see section 7.1',
 		'scope' => $scope,
+		'expires' => $access_token['expires'],
 	);
-
-	if ($state = get_str("state")){
-		$rsp['state'] = $state;
-	}
 
 	local_send_json($rsp);
 	exit();
