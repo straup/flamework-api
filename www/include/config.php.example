@@ -32,6 +32,15 @@
 	$GLOBALS['cfg']['api_oauth2_require_authentication_header'] = 0;
 	$GLOBALS['cfg']['api_oauth2_allow_get_parameters'] = 0;
 
+	# API site keys (TTL is measured in seconds)
+
+	$GLOBALS['cfg']['enable_feature_api_site_keys'] = 1;
+	$GLOBALS['cfg']['enable_feature_api_site_tokens'] = 1;
+
+	$GLOBALS['cfg']['api_site_keys_ttl'] = 28800;		# 8 hours
+	$GLOBALS['cfg']['api_site_tokens_ttl'] = 28000;		# 8 hours
+	$GLOBALS['cfg']['api_site_tokens_user_ttl'] = 3600;	# 1 hour
+
 	# API pagination
 
 	$GLOBALS['cfg']['api_per_page_default'] = 100;
@@ -40,11 +49,6 @@
 	# The actual API config
 
 	$GLOBALS['cfg']['api'] = array(
-
-		# This is maybe what we should move to (20130222/straup)
-		# $GLOBALS['cfg']['api_formats'] = array('json');
-		# $GLOBALS['cfg']['api_default_format'] = 'json';
-		# $GLOBALS['cfg']['api_methods'] = array();
 
 		'formats' => array( 'json' ),
 		'default_format' => 'json',
