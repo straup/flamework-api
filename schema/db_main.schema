@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS `ApiKeys`;
 CREATE TABLE `ApiKeys` (
   `id` bigint(20) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
+  `role_id` tinyint(3) unsigned NOT NULL,
   `api_key` varchar(40) NOT NULL,
   `app_secret` varchar(64) NOT NULL,
   `app_callback` varchar(255) NOT NULL,
@@ -14,7 +15,8 @@ CREATE TABLE `ApiKeys` (
   `last_modified` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `by_key` (`api_key`),
-  KEY `by_user` (`user_id`,`deleted`,`created`)
+  KEY `by_user` (`user_id`,`deleted`,`created`),
+  KEY `by_role` (`role_id`,`deleted`,`created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `OAuth2AccessTokens`;
