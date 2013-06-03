@@ -1,4 +1,4 @@
-# this needs to be worked in to init.php... how exactly (20130602/straup)
+	# This needs to be added to your init.php file
 
 	if ($this_is_webpage){
 

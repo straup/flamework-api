@@ -39,3 +39,5 @@ cat ${API}/schema/db_main.schema >> ${PROJECT}/schema/alters/${YMD}.db_main.sche
 echo "[NOTE] please add/update the contents of '${API}/www/.htaccess' to your ${PROJECT}/www/.htacess file"
 
 echo "[NOTE] please add/update the contents of '${API}/include/config.php.example' to your ${PROJECT}/www/include/config.php file"
+
+# TO DO: something about `init.php.site-keys`
