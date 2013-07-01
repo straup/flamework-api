@@ -25,7 +25,7 @@ echo "copying library code to ${PROJECT}"
 cp ${API}/www/include/*.php ${PROJECT}/www/include/
 
 echo "copying script (bin) files to ${PROJECT}"
-cp ${API}/www/bin/*.php ${PROJECT}/www/bin/
+cp ${API}/bin/*.php ${PROJECT}/bin/
 
 YMD=`date "+%Y%m%d"`
 mkdir ${PROJECT}/schema/alters
