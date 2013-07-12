@@ -206,6 +206,9 @@ And then add:
 
 A few things to notice:
 
+* The part where we're adding the site keys/tokens code _after_ we call
+ `login_check_login`
+
 * The part where we're checking that the API itself is enabled.
 
 * The part where OAuth2 tokens are hard-coded. That will need to be revisited if
