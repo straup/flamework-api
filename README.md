@@ -15,8 +15,11 @@ You can either install all of the files manually or you can the `bin/setup.sh`
 script which will install most of the relevant bits automatically and make a
 note of the stuff you'll see need to do yourself.
 
-config.php
---
+# .htaccess
+
+Please write me...
+
+# config.php
 
 ## Basics
 
@@ -120,8 +123,7 @@ paginated.
 The maximum number of results to return, per page, for things that are
 paginated.
 
-API methods
---
+# API methods
 
 API methods, and related specifics, are defined as a dictionary where the keys
 are method names and the values are the method details.
@@ -215,8 +217,7 @@ be restricted (or "blessed") by API key, access token or host.
 
 API method "blessings" are discussed in detail below.
 
-API method "defintions"
---
+# API method "defintions"
 
 The `$GLOBALS['cfg']['api_method_definitions']` config variable is a little
 piece of syntatic sugar and helper code to keep the growing number of API
@@ -236,8 +237,7 @@ definitions. For example:
 
 See the included `config_api_methods.php` for an example of this setup.
 
-"Blessed" API methods
---
+# "Blessed" API methods
 
 "Blessed" API methods are those methods with one or more access controls on
 them. Access controls are always based on API keys and may also be further
@@ -323,8 +323,7 @@ If defined in the scope of an API key these restrictions will apply to all child
 method and method class definitions. Note if this key is defined as a empty list
 no requests will be granted access to its corresponding API method.
 
-URLs
---
+# URLs
 
 These are the URLs/endpoints that will be added to your project if you install flamework-api.
 
@@ -403,13 +402,7 @@ around the API key in URLs and not the actual access token.)
 
 This is the actual API dispatch/endpoint. Code points here.
 
-OAuth2
---
-
-OAuth2 seemed like a good idea, at the time. It works. It is not ideal.
-
-To do
---
+# To do
 
 * A good web-based API explorer
 
