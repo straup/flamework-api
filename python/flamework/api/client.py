@@ -20,7 +20,7 @@ class OAuth2:
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
 
-        # Same same – you should only ever talk to OAuth2 using HTTP
+        # Same same - you should only ever talk to OAuth2 using HTTP
         # (20130403/straup)
 
         self.use_https = kwargs.get('use_https', True)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     try:
         now = int(time.time())
 
-        rsp = api.call('test.echo', foo='bar', timestamp=now)
+        rsp = api.call('api.test.echo', foo='bar', timestamp=now)
         print pprint.pformat(rsp)
 
     except Exception, e:

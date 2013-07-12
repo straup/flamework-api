@@ -105,11 +105,17 @@
 			$GLOBALS['cfg']['user'] = $auth_rsp['user'];
 		}
 
-		# Third, lessings and other method specific access controls
+		# Check for require-iness of users here ?
+
+		# Roles - for API keys (things like only the site keys)
+
+		api_config_ensure_role($method_row, $key_row, $token_row);
+
+		# Blessings and other method specific access controls
 
 		api_config_ensure_blessing($method_row, $key_row, $token_row);
 
-		# Fourth, crumbs - because they are tastey
+		# Finally, crumbs - because they are tastey
 
 		if ($method_row['requires_crumb']){
 			api_auth_ensure_crumb($method_row);

@@ -1,0 +1,3 @@
+ALTER TABLE ApiKeys ADD role_id TINYINT(3) UNSIGNED NOT NULL;
+
+CREATE INDEX `by_role` ON ApiKeys (`role_id`, `deleted`, `created`);
