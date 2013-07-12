@@ -208,14 +208,14 @@ A few things to notice:
 
 * The part where we're checking that the API itself is enabled.
 
+* The part where OAuth2 tokens are hard-coded. That will need to be revisited if
+  another delegated auth token system is supported. Right not it's the only game
+  so...
+
 * The part where the token is being assigned to a Smarty variable. How your code
 uses that variable is left up to you. Specifically if you're calling the API you
 will need to grab the Smarty variable `site_token` and pass it along with each
 request.
-
-* The part where OAuth2 tokens are hard-coded. That will need to be revisited if
-  another delegated auth token system is supported. Right not it's the only game
-  so...
 
 Finally, having to modify `init.php` really sucks. It works but it's neither
 great nor elegant. Any suggestions for making this better are welcome.
