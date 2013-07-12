@@ -17,7 +17,19 @@ note of the stuff you'll see need to do yourself.
 
 # .htaccess
 
-Please write me...
+You will need to copy the contents of the [flamework-api .htaccess
+file](./www/.htaccess) in your projects's .htaccess file. Take a look at it and
+be sure to notice all the stuff that's been commented out at the top.
+
+It's a lot of hoop-jumping to separate API calls (api.example.com/rest) from all
+the other user-level administrative pages (example.com/api/methods) and to make
+sure things that need to be done over SSL are (like OAuth2). By default it's all
+commented out because what do I know about your webserver is configured. So
+spend a couple minutes looking at all this stuff and thinking about it and
+adjusting accordingly. Also: remember _all the security around OAuth2_ is
+predicated around the use of SSL.
+
+Otherwise all the URLs defined in the .htaccess file are discussed below.
 
 # config.php
 
