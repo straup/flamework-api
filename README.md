@@ -188,13 +188,13 @@ Go and look for the following:
 
 And then add:
 
-	        # API site key/token stuff
+		# API site key/token stuff
 
 		if (features_is_enabled("api")){
 
-                        loadlib("api");
+			loadlib("api");
 
-		        if (features_is_enabled(array("api_site_keys", "api_site_tokens"))){
+			if (features_is_enabled(array("api_site_keys", "api_site_tokens"))){
 
 				loadlib("api_keys");
 				loadlib("api_oauth2_access_tokens");
@@ -204,13 +204,21 @@ And then add:
 			}
 		}
 
-_Notice the part where the token is being assigned to a Smarty
-variable. How your code uses that variable is left up to you. Specifically if
-you're calling the API you will need to grab the Smarty variable `site_token`
-and pass it along with each request._
+A few things to notice:
 
-Having to modify `init.php` sucks, I know. Any suggestions for making this 
-better are welcome.
+* The part where we're checking that the API itself is enabled.
+
+* The part where the token is being assigned to a Smarty variable. How your code
+uses that variable is left up to you. Specifically if you're calling the API you
+will need to grab the Smarty variable `site_token` and pass it along with each
+request.
+
+* The part where OAuth2 tokens are hard-coded. That will need to be revisited if
+  another delegated auth token system is supported. Right not it's the only game
+  so...
+
+Finally, having to modify `init.php` really sucks. It works but it's neither
+great nor elegant. Any suggestions for making this better are welcome.
 
 ## Pagination
 
