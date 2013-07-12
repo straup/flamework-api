@@ -50,7 +50,7 @@
 		}
 
 		if (($token_row['expires']) && ($token_row['expires'] < time())){
-			return array('ok' => 0, 'error' => 'Invalid access token', 'error_code' => 400);
+			return array('ok' => 0, 'error' => 'Access token has expired', 'error_code' => 400);
 		}
 
 		# I find it singularly annoying that we have to do this here
@@ -71,11 +71,29 @@
 			}
 		}
 
-		$user = users_get_by_id($token_row['user_id']);
+		# Ensure user-iness - this may seem like a no-brainer until you think
+		# about how the site itself uses the API in the absence of a logged-in
+		# user (20130508/straup)
 
-		if ((! $user) || ($user['deleted'])){
-			return array('ok' => 0, 'error' => 'Not a valid user', 'error_code' => 400);
+		$ensure_user = 1;
+		$user = null;
+
+		if (features_is_enabled("api_site_keys", "api_site_tokens")){
+
+			# check that API key is a site key
+			$ensure_user = ($token_row['user_id']) ? 1 : 0;
 		}
+
+		if ($ensure_user){
+
+			$user = users_get_by_id($token_row['user_id']);
+
+			if ((! $user) || ($user['deleted'])){
+				return array('ok' => 0, 'error' => 'Not a valid user', 'error_code' => 400);
+			}
+		}
+
+		#
 
 		return array(
 			'ok' => 1,

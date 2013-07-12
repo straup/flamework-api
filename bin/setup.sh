@@ -14,7 +14,8 @@ echo "copying css files to ${PROJECT}"
 cp ${API}/www/css/*.css ${PROJECT}/www/css/
 
 echo "" > ${PROJECT}/www/css/main.css
-echo "@import url('/css/api.css');" > ${PROJECT}/www/css/main.css
+echo "/* flamework-api */" >> ${PROJECT}/www/css/main.css
+echo "@import url('/css/api.css');" >> ${PROJECT}/www/css/main.css
 
 echo "[NOTE] a CSS @import stamement for '/css/api.css' has been added to main.css; adjust as needed"
 
@@ -25,7 +26,7 @@ echo "copying library code to ${PROJECT}"
 cp ${API}/www/include/*.php ${PROJECT}/www/include/
 
 echo "copying script (bin) files to ${PROJECT}"
-cp ${API}/www/bin/*.php ${PROJECT}/www/bin/
+cp ${API}/bin/*.php ${PROJECT}/bin/
 
 YMD=`date "+%Y%m%d"`
 mkdir ${PROJECT}/schema/alters
@@ -38,3 +39,5 @@ cat ${API}/schema/db_main.schema >> ${PROJECT}/schema/alters/${YMD}.db_main.sche
 echo "[NOTE] please add/update the contents of '${API}/www/.htaccess' to your ${PROJECT}/www/.htacess file"
 
 echo "[NOTE] please add/update the contents of '${API}/include/config.php.example' to your ${PROJECT}/www/include/config.php file"
+
+# TO DO: something about `init.php.site-keys`
