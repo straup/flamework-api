@@ -18,8 +18,6 @@
 
 	# API URLs and endpoints
 
-	# $GLOBALS['cfg']['site_abs_root_url'] = '';
-
 	$GLOBALS['cfg']['api_abs_root_url'] = '';	# leave blank - set in api_config_init()
 	$GLOBALS['cfg']['site_abs_root_url'] = '';	# leave blank - set in api_config_init()
 

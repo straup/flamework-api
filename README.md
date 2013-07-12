@@ -15,15 +15,10 @@ You can either install all of the files manually or you can the `bin/setup.sh`
 script which will install most of the relevant bits automatically and make a
 note of the stuff you'll see need to do yourself.
 
-**Note:** The documentation below is a bit our of date (as of 20130409) and will be updated shortly.
-
 config.php
 --
 
-### $GLOBALS['cfg']['api_abs_root_url'] = "https://api.example.com/;
-
-The fully qualified hostname where your API lives. This may or not be the same
-as the host your project runs on.
+## Basics
 
 ### $GLOBALS['cfg']['enable_feature_api'] = 1;
 
@@ -47,6 +42,22 @@ it's not.
 This currently doesn't actually do anything. But, you know, throttling! (See
 above inre: logging.)
 
+### $GLOBALS['cfg']['api_abs_root_url'] = '';
+
+_You should leave this blank as it will be set automatically in api_config_init()_
+
+### $GLOBALS['cfg']['site_abs_root_url'] = '';
+
+_You should leave this blank as it will be set automatically in api_config_init()_
+
+### $GLOBALS['cfg']['api_subdomain'] = '';
+
+### $GLOBALS['cfg']['api_endpoint'] = 'api/rest/';
+
+### $GLOBALS['cfg']['api_require_ssl'] = 1;
+
+## API keys
+
 ### $GLOBALS['cfg']['enable_feature_api_require_keys'] = 0;
 
 Irrelevant if you are using OAuth2 (below) otherwise a boolean flag indicating
@@ -55,6 +66,8 @@ whether API methods must be called with a registered API key.
 ### $GLOBALS['cfg']['enable_feature_api_register_keys'] = 1;
 
 A boolean flag indicating whether or not to allow users to create new API keys.
+
+## Delegated authentication
 
 ### $GLOBALS['cfg']['enable_feature_api_delegated_auth'] = 1;
 
@@ -71,6 +84,32 @@ A boolean flag indicating whether or not to allow users to magically create both
 API keys and auth (access) tokens for themselves without all the usual
 hoop-jumping of delegated auth.
 
+# OAuth2
+
+### $GLOBALS['cfg']['api_oauth2_require_authentication_header'] = 0;
+
+### $GLOBALS['cfg']['api_oauth2_allow_get_parameters'] = 0;
+
+## Site keys
+
+### $GLOBALS['cfg']['enable_feature_api_site_keys'] = 1;
+
+### $GLOBALS['cfg']['enable_feature_api_site_tokens'] = 1;
+
+### $GLOBALS['cfg']['api_site_keys_ttl'] = 28800;
+
+Default is 28800 seconds, or 8 hours
+
+### $GLOBALS['cfg']['api_site_tokens_ttl'] = 28000;
+
+Default is 28800 seconds, or 8 hours
+
+### $GLOBALS['cfg']['api_site_tokens_user_ttl'] = 3600;
+
+Default is 3600 seconds, or 1 hours
+
+## Pagination
+
 ### $GLOBALS['cfg']['api_per_page_default'] = 100;
 
 The default number of results to return, per page, for things that are
@@ -81,7 +120,7 @@ paginated.
 The maximum number of results to return, per page, for things that are
 paginated.
 
-API method defintions
+API methods
 --
 
 API methods, and related specifics, are defined as a dictionary where the keys
@@ -95,6 +134,16 @@ For example:
 			"documented" => 1,
 			"enabled" => 1,
 			"library" => "api_spec"
+			"parameters" => array(
+				array("name" => "method_class", "description" => "Only return methods contained by this method class", "required" => 0),
+			),
+			"errors" => array(
+				array("code" => "404", "description" => "Method class not found"),
+				array("code" => "418", "description" => "I'm a teapot"),
+			),
+			"notes" => array(
+				"You are beautiful",
+			),
 		)
 	)
 
@@ -117,6 +166,30 @@ A boolean flag indicating whether or not this method can be called.
 
 The name of the library to find the actual function that a method name
 corresponds to. All things being equal this is what will be invoked.
+
+### parameters
+
+An optional list of dictionaries containing parameter definitions for the method. Valid keys for each dictionary are:
+
+* **name** - the name of the parameter
+
+* **description** - a short text describing the requirements and context for the parameter
+
+* **required** - a boolean flag indicating whether or not the parameter is required
+
+### errors
+
+An optional list of dictionaries containing error definitions for the method. Valid keys for each dictionary are:
+
+* **code** - the numeric code for the error response
+
+* **description** – a short text describing the reasons or context in which the error was triggered
+
+Error codes are left to the discretion of individual developers.
+
+### notes
+
+An optional list of notes that are each blobs of text.
 
 ### request_method
 
@@ -142,7 +215,7 @@ be restricted (or "blessed") by API key, access token or host.
 
 API method "blessings" are discussed in detail below.
 
-API method defintions (and $GLOBALS['cfg']['api_method_definitions'])
+API method "defintions"
 --
 
 The `$GLOBALS['cfg']['api_method_definitions']` config variable is a little
@@ -268,65 +341,65 @@ about it and adjusting accordingly.
 Also: Remember that _all the security_ around OAuth2 is predicated around the use
 of SSL.
 
-### example.com/api/
+### api/
 
 A simple landing page for the API with pointers to documentation about methods
 and delegated authentication.
 
-### example.com/api/methods/
+### api/methods/
 
 The list of public (enabled and documented) methods for the API.
 
-### example.com/api/methods/SOME_METHOD_NAME/
+### api/methods/SOME_METHOD_NAME/
 
 Documentation and examples for individual API methods.
 
-### example.com/api/keys/
+### api/keys/
 
 The list of API keys registered by a (logged in) user.
 
-### example.com/api/keys/register/
+### api/keys/register/
 
 Create a new API key.
 
-### example.com/api/keys/API_KEY/
+### api/keys/API_KEY/
 
 Review or update an existing API key.
 
-### example.com/api/keys/API_KEY/tokens/
+### api/keys/API_KEY/tokens/
 
 The list of OAuth2 access tokens associated with a given API key.
 
-### example.com/api/oauth2/
+### api/oauth2/
 
 A simple landing page for the OAuth2 webpages with pointers descriptions 
 and pointers.
 
-### example.com/api/oauth2/authenticate/
+### api/oauth2/authenticate/
 
 The standard OAuth2 authenticate a user / authorize an application webpage.
 
-### example.com/api/oauth2/authenticate/like-magic/
+### api/oauth2/authenticate/like-magic/
 
 A non-standard helper OAuth2 webpage to allow (logged in) users to create
 themselves both an API key and a corresponding access token from a single page
 by "clicking a button".
 
-### example.com/api/oauth2/authenticate/access_token/
+### api/oauth2/authenticate/access_token/
 
 The standard OAuth2 echange a (temporary) grant token for a (more permanent)
 access token endpoint. This is meant for robots.
 
-### example.com/api/oauth2/tokens/
+### api/oauth2/tokens/
 
 A list of OAuth2 access tokens for a (logged in) user.
 
-### example.com/api/oauth2/tokens/API_KEY/
+### api/oauth2/tokens/API_KEY/
 
 Review of update an existing OAuth2 access token. (Note how we are passing
 around the API key in URLs and not the actual access token.)
 
-### example.com/rest/
+### rest/
 
 This is the actual API dispatch/endpoint. Code points here.
 
@@ -339,6 +412,8 @@ To do
 --
 
 * A good web-based API explorer
+
+* Admin pages for viewing API keys and tokens
  
 See also
 --
