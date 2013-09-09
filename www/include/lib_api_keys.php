@@ -91,6 +91,7 @@
 		$ttl = $GLOBALS['cfg']['api_site_keys_ttl'];
 
 		$key = api_keys_get_site_key();
+
 		$now = time();
 
 		# TO DO: error handling/reporting...
@@ -134,7 +135,7 @@
 
 		$row = db_single($rsp);
 
-		if ($rsp['ok']){
+		if (($rsp['ok']) && ($row)){
 			cache_set($cache_key, $row);
 		}
 
