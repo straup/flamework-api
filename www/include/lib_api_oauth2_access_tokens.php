@@ -274,7 +274,7 @@
 
 		$site_token = api_oauth2_access_tokens_get_site_token($user);
 
-		if ($site_token['expires'] <= $now){
+		if (($site_token) && ($site_token['expires'] <= $now)){
 
 			$rsp = api_oauth2_access_tokens_delete($site_token);
 
