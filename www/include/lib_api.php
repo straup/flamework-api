@@ -45,6 +45,8 @@
 			api_output_error(404, "Method '{$enc_method}' not found");
 		}
 
+		apache_setenv("API_METHOD", $method);
+
 		$method_row = $methods[$method];
 
 		$key_row = null;
@@ -104,6 +106,8 @@
 		if ($auth_rsp['user']){
 			$GLOBALS['cfg']['user'] = $auth_rsp['user'];
 		}
+
+		apache_setenv("API_KEY", $key_row['api_key']);
 
 		# Check for require-iness of users here ?
 
