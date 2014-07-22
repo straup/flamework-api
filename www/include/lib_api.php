@@ -44,6 +44,7 @@
 		$methods = $GLOBALS['cfg']['api']['methods'];
 
 		if ((! $method) || (! isset($methods[$method]))){
+			$enc_method = htmlspecialchars($method);
 			api_output_error(404, "Method '{$enc_method}' not found");
 		}
 
