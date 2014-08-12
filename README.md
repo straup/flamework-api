@@ -526,3 +526,5 @@ See also
 * [flamework](https://github.com/straup/flamework)
 
 * [flamework-tools](https://github.com/straup/flamework)
+
+* [py-flamework-api](https://github.com/straup/py-flamework-api)

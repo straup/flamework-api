@@ -10,6 +10,7 @@
  	#################################################################
 
 	loadlib("api_output");
+	loadlib("api_output_utils");
 	loadlib("api_log");
 
 	loadlib("api_auth");
@@ -42,6 +43,7 @@
 		$methods = $GLOBALS['cfg']['api']['methods'];
 
 		if ((! $method) || (! isset($methods[$method]))){
+			$enc_method = htmlspecialchars($method);
 			api_output_error(404, "Method '{$enc_method}' not found");
 		}
 
