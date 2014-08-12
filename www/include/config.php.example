@@ -7,6 +7,7 @@
 	$GLOBALS['cfg']['enable_feature_api'] = 1;
 
 	$GLOBALS['cfg']['enable_feature_api_documentation'] = 1;
+	$GLOBALS['cfg']['enable_feature_api_explorer'] = 1;
 	$GLOBALS['cfg']['enable_feature_api_logging'] = 1;
 	$GLOBALS['cfg']['enable_feature_api_throttling'] = 0;
 
@@ -38,6 +39,10 @@
 	$GLOBALS['cfg']['api_site_keys_ttl'] = 28800;		# 8 hours
 	$GLOBALS['cfg']['api_site_tokens_ttl'] = 28000;		# 8 hours
 	$GLOBALS['cfg']['api_site_tokens_user_ttl'] = 3600;	# 1 hour
+
+	$GLOBALS['cfg']['api_explorer_keys_ttl'] = 28800;		# 8 hours
+	$GLOBALS['cfg']['api_explorer_tokens_ttl'] = 28000;		# 8 hours
+	$GLOBALS['cfg']['api_explorer_tokens_user_ttl'] = 28000;	# 8 hours
 
 	# API pagination
 
