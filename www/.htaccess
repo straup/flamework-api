@@ -39,10 +39,12 @@
 # This all (especially the oauth2 auth/token stuff) relies on the
 # HTTPS rules for logged in users (20121024/straup)
 
-RewriteRule  ^api/?$			api.php		[L]
-RewriteRule  ^api/methods/?$		api_methods.php	[L]
-RewriteRule  ^api/methods/print/?$	api_methods.php?print=1	[L]
-RewriteRule  ^api/methods/(.*)/?$	api_method.php?method=$1&%{QUERY_STRING}		[L]
+RewriteRule  ^api/?$				api.php		[L]
+RewriteRule  ^api/methods/?$			api_methods.php	[L]
+RewriteRule  ^api/methods/print/?$		api_methods.php?print=1	[L]
+RewriteRule  ^api/methods/explore/?$		api_methods.php	[L]
+RewriteRule  ^api/methods/(.*)/explore/?$	api_method_explore.php?method=$1&%{QUERY_STRING}	[L]
+RewriteRule  ^api/methods/(.*)/?$		api_method.php?method=$1&%{QUERY_STRING}		[L]
 
 RewriteRule  ^api/keys/?$						api_keys.php?%{QUERY_STRING} [L]
 RewriteRule  ^api/keys/register/?$					api_keys_register.php?%{QUERY_STRING} [L]
