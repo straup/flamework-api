@@ -5,7 +5,10 @@
 	loadlib("api");
 	loadlib("api_spec");
 
-	features_ensure_enabled(array("api", "api_documentation"));
+	features_ensure_enabled(array(
+		"api",
+		"api_documentation",
+	));
 
 	$method = get_str("method");
 
@@ -19,11 +22,7 @@
 
 	$details = $GLOBALS['cfg']['api']['methods'][$method];
 
-	if (! $details['documented']){
-		error_404();
-	}
-
-	if (! $details['enabled']){
+	if (! api_methods_can_view_method($details, $GLOBALS['cfg']['user']['id'])){
 		error_404();
 	}
 
@@ -36,6 +35,9 @@
 	# TO DO: convert markdown in $details
 
 	$GLOBALS['smarty']->assign("method", $method);
+	$GLOBALS['smarty']->assign("response_formats", $GLOBALS['cfg']['api']['formats']);
+	$GLOBALS['smarty']->assign("default_format", $GLOBALS['cfg']['api']['default_format']);
+
 	$GLOBALS['smarty']->assign_by_ref("details", $details);
 
 	$GLOBALS['smarty']->display("page_api_method.txt");
