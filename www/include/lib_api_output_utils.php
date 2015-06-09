@@ -18,8 +18,8 @@
 
 		if ((isset($more['is_error'])) && ($more['is_error'])){
 
-			$code = $rsp['error']['code'];
-			$status_code = (isset($codes[$code])) ? $code : 500;
+			$code = (! is_array($rsp['error']['code'])) ? $rsp['error']['code'] : 0;
+			$status_code = (($code) && (isset($codes[$code]))) ? $code : 500;
 		}
 
 		else if (isset($more['created'])){
@@ -38,8 +38,14 @@
 		header("Status: {$enc_status}");
 
 		if (isset($more['is_error'])){
-			header("X-api-error-code: " . htmlspecialchars($rsp['error']['code']));
-			header("X-api-error-message: " . htmlspecialchars($rsp['error']['message']));
+
+			if (! is_array($rsp['error']['code'])){
+				header("X-api-error-code: " . htmlspecialchars($rsp['error']['code']));
+			}
+
+			if (! is_array($rsp['error']['message'])){
+				header("X-api-error-message: " . htmlspecialchars($rsp['error']['message']));
+			}
 		}
 	}
 

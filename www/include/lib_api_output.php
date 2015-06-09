@@ -1,6 +1,6 @@
 <?php
 
-	#################################################################
+	loadlib("api_output_utils");
 
 	# Hey look! Running code!!
 
@@ -23,7 +23,7 @@
 			$possible = request_str('format');
 		}
 
-		else {
+		elseif (function_exists('getallheaders')){
 
 			$headers = getallheaders();
 
@@ -40,6 +40,8 @@
 				}
 			}
 		}
+
+		else {}
 
 		if ($possible){
 

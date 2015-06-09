@@ -10,8 +10,9 @@
 		# If I have an API specific subdomain/prefix then check to see if I am already
 		# running on that host; if not then update the 'api_server_name' config
 
-		if (($GLOBALS['cfg']['api_subdomain']) && (! preg_match("/^{$GLOBALS['cfg']['api_subdomain']}\.(?:.*)/", $GLOBALS['cfg']['api_server_name']))){
-			$GLOBALS['cfg']['api_server_name'] = $GLOBALS['cfg']['api_subdomain'] . "." . $GLOBALS['cfg']['api_server_name'];
+		if (($GLOBALS['cfg']['api_subdomain']) && (! preg_match("/^{$GLOBALS['cfg']['api_subdomain']}/", $GLOBALS['cfg']['api_server_name']))){
+
+			$GLOBALS['cfg']['api_server_name'] = $GLOBALS['cfg']['api_subdomain'] . $GLOBALS['cfg']['api_server_name'];
 		}
 
 		# Build the 'api_abs_root_url' based on everything above
@@ -22,8 +23,20 @@
 		# running on that host; if I am then update the 'site_abs_root_url' config and
 		# use it in your code accordingly.
 
-		if (($GLOBALS['cfg']['api_subdomain']) && (preg_match("/{$GLOBALS['cfg']['api_subdomain']}\.(?:.*)/", $GLOBALS['cfg']['api_server_name']))){
-			$GLOBALS['cfg']['site_abs_root_url'] = str_replace("{$GLOBALS['cfg']['api_subdomain']}.", "", $GLOBALS['cfg']['abs_root_url']);
+		if (($GLOBALS['cfg']['api_subdomain']) && (preg_match("/^{$GLOBALS['cfg']['api_subdomain']}/", $GLOBALS['cfg']['api_server_name']))){
+
+			# the old way (20150513/copea)
+			# $GLOBALS['cfg']['site_abs_root_url'] = str_replace("{$GLOBALS['cfg']['api_subdomain']}", "", $GLOBALS['cfg']['abs_root_url']);
+
+			$server_name = $GLOBALS['cfg']['api_server_name'];
+			$server_name = preg_replace("/^{$GLOBALS['cfg']['api_subdomain']}/", "", $server_name);
+
+			$GLOBALS['cfg']['site_abs_root_url' ] = "{$GLOBALS['cfg']['api_server_scheme']}://{$server_name}/";
+
+			# see this – we need to do this because we call $GLOBALS['cfg']['abs_root_url'] all
+			# over lib_whatever land (20150513/copea)
+
+			$GLOBALS['cfg']['abs_root_url'] = $GLOBALS['cfg']['site_abs_root_url'];
 		}
 
 		else {
@@ -32,18 +45,31 @@
 
 		# Load methods / blessings
 
+		# $GLOBALS['timing_keys']["api_config_methods"] = "API methods";
+		# $GLOBALS['timings']['api_config_methods_count'] = 0;
+		# $GLOBALS['timings']['api_config_methods_time'] = 0;
+
+		$start = microtime_ms();
+
 		foreach ($GLOBALS['cfg']['api_method_definitions'] as $def){
 
 			try {
 				$path = FLAMEWORK_INCLUDE_DIR . "/config_api_{$def}.php";
 				include_once($path);
+
+				# $GLOBALS['timings']['api_config_methods_count'] += 1;
 			}
 
 			catch (Exception $e){
 				# $msg = $e->getMessage();
-				_api_config_freakout_and_die();
+				api_config_freakout_and_die();
 			}
 		}
+
+		$end = microtime_ms();
+		$time = $end - $start;
+
+		# $GLOBALS['timings']['api_config_methods_time'] = $time;
 
 		api_config_apply_blessings();
 	}
@@ -52,7 +78,28 @@
 
 	function api_config_apply_blessings(){
 
+		# $GLOBALS['timing_keys']["api_blessings"] = "API blessings";
+		# $GLOBALS['timings']['api_blessings_count'] = 0;
+		# $GLOBALS['timings']['api_blessings_time'] = 0;
+
 		foreach ($GLOBALS['cfg']['api']['blessings'] as $api_key => $key_details){
+
+			# $GLOBALS['timings']['api_blessings_count'] += 1;
+
+			$start = microtime_ms();
+			$whoami = $api_key;
+
+			if ($api_key == 'site_key'){
+
+				loadlib("api_keys");
+
+				$blessed_site_keys = (features_is_enabled(array("api_site_keys", "api_site_keys_blessed"))) ? 1 : 0;
+
+				if (($blessed_site_keys) && ($site_key = api_keys_fetch_site_key())){
+
+					$api_key = $site_key['api_key'];
+				}
+			}
 
 			$blessing_defaults = array();
 
@@ -90,6 +137,13 @@
 					_api_config_apply_blessing($method_name, $api_key, $blessing);
 				}
 			}
+
+			# _api_config_apply_blessing('api.test.isBlessed', $api_key, $blessing_defaults);
+
+			$end = microtime_ms();
+			$time = $end - $start;
+
+			# $GLOBALS['timings']['api_blessings_time'] += $time;
 		}
 	}
 
@@ -108,13 +162,13 @@
 
 	function api_config_ensure_blessing($method_row, $key_row, $token_row=null){
 
-		if (isset($method_row['requires_blessing'])){
+		if ((isset($method_row['requires_blessing'])) && ($method_row['requires_blessing'])){
 
 			$blessings = $method_row['blessings'];
 			$api_key = $key_row['api_key'];
 
 			if (! isset($blessings[$api_key])){
-				api_output_error(403, "Invalid API key");
+				api_output_error(403, "This key has not been configured for use with this API method");
 			}
 
 			$details = $blessings[$api_key];
@@ -128,8 +182,10 @@
 
 			if (isset($details['hosts'])){
 
-				if (! in_array($_SERVER['REMOTE_ADDR'], $details['hosts'])){
-					api_output_error(403, "Invalid host: '{$_SERVER['REMOTE_ADDR']}'");
+				$addr = remote_addr();
+
+				if (! in_array($addr, $details['hosts'])){
+					api_output_error(403, "Invalid host: '{$addr}'");
 				}
 			}
 
@@ -143,6 +199,52 @@
 					api_output_error(403, 'Invalid token');
 				}
 			}
+
+			if (isset($details['user_roles'])){
+
+				$user = $GLOBALS['cfg']['user'];
+
+				if (! $user){
+					api_output_error(403, 'Insufficient permissions');
+				}
+
+				if ((! is_array($details['user_roles'])) || (! count($details['user_roles']))){
+					api_output_error(403, 'Permissions are incorrectly configured, defaulting to NO.');
+				}
+
+				if (! auth_has_role_all($details['user_roles'], $user['id'])){
+					api_output_error(403, 'Insufficient permissions');
+				}
+			}
+
+			else if (isset($details['user_roles_any'])){
+
+				$user = $GLOBALS['cfg']['user'];
+
+				if (! $user){
+					api_output_error(403, 'Insufficient permissions');
+				}
+
+				if ((! is_array($details['user_roles_any'])) || (! count($details['user_roles_any']))){
+					api_output_error(403, 'Permissions are incorrectly configured, defaulting to NO.');
+				}
+
+				if (! auth_has_role_any($details['user_roles_any'], $user['id'])){
+					api_output_error(403, 'Insufficient permissions');
+				}
+			}
+
+			else {}
+
+			# Ensure that site keys with blessings have been configured to require
+			# a set of roles (20140814/straup)
+
+			if (api_keys_is_site_key($key_row)){
+
+				if ((! isset($details['user_roles'])) && (! isset($details['user_roles_any']))){
+					api_output_error(403, 'Permissions are incorrectly configured, defaulting to NO.');
+				}
+			}
 		}
 
 		return 1;
@@ -150,28 +252,58 @@
 
 	#################################################################
 
-	function api_config_ensure_role(&$method, &$key, &$token){
+	# For example:
+	#
+	# "foo.bar.addBaz" => array(
+	# 	"description" => "",
+	# 	"documented" => 0,
+	#	"enabled" => 1,
+	#	"requires_blessing" => 0,
+	#	"requires_role" => array("site"),
+	#	"requires_user_role" => array("staff"),
+	#
+	# As in: require a site key for someone who is staff
+	# (20140307/straup)
 
-		$roles_map = api_keys_roles_map('string keys');
-		$roles = array_keys($roles_map);
+	function api_config_ensure_roles(&$method, &$key, &$token){
 
-		if (! is_array($method['requires_role'])){
-			return 1;
-		}
+		$roles_map = api_keys_roles_map();
 
-		foreach ($method['requires_role'] as $r){
+		if (is_array($method['requires_key_role'])){
 
-			if (in_array($r, $roles)){
-				return 1;
+			$role_id = $key['role_id'];
+			$role = $roles_map[$role_id];
+
+			if (! in_array($role, $method['requires_key_role'])){
+				api_output_error(403, "Insufficient permissions for API key");
 			}
 		}
 
-		api_output_error(403, "Insufficient permissions for API key");
+		elseif (isset($method['requires_key_role'])){
+			api_output_error(403, "Insufficient permissions for API key (because the server is misconfigured)");
+		}
+
+		else {}
+
+		if (is_array($method['requires_user_role'])){
+
+			if (! auth_has_role_any($method['requires_user_role'], $token['user_id'])){
+				api_output_error(403, "Insufficient permissions for API key");
+			}
+		}
+
+		else if (isset($method['requires_user_role'])){
+			api_output_error(403, "Insufficient permissions for API key (because the server is misconfigured)");
+		}
+
+		else {}
+
+		return 1;
 	}
 
 	#################################################################
 
-	function _api_config_freakout_and_die($reason=null){
+	function api_config_freakout_and_die($code=500, $reason=null){
 
 		$msg = "The API is currently throwing a temper tantrum. That's not good.";
 
@@ -189,7 +321,7 @@
 		loadlib("api_output");
 		loadlib("api_log");
 
-		api_output_error(500, $msg);
+		api_output_error($code, $msg);
 		exit();
 	}
 
