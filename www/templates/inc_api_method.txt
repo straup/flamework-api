@@ -38,8 +38,8 @@
 
 {if $details.parameters|@count}
 {foreach from=$details.parameters item="param"}
-{if $param.documented}
-<li><strong>{$param.name|escape} {if $param.required} <span class="text-danger">(required)</span>{/if}</strong> &#8212; {$param.description|escape}</li>
+{if $param.documented || 'admin'|@auth_has_role}
+<li><strong>{$param.name|escape} <span class="text-danger">{if $param.required}(required){/if}{if !$param.documented} (undocumented){/if}</span></strong> &#8212; {$param.description|escape}</li>
 {/if}
 {/foreach}
 {/if}
@@ -79,9 +79,9 @@
 <h3>Example request {if "api_explorer"|@features_is_enabled}<small style="display:inline !important;"> {if $details.requires_blessing} This method requires extra-special permissions so it's easiest just to image that it will work with the API explorer{else}&#8212; <a href="{$cfg.abs_root_url}api/methods/{$method|escape}/explore/" style="color:#FF5700">or take this API method for a spin</a>{/if}</small>{/if}</h3>
 
 {if $api_request_method=='GET' and ($cfg.api_auth_type!='oauth2' or $cfg.api_oauth2_allow_get_parameters)}
-<pre class="api-example-request">curl -X {$api_request_method|escape} '{$cfg.api_abs_root_url}<strong>{$cfg.api_endpoint}</strong>?method=<strong class="api-param-required">{$method|escape}</strong>{if $cfg.api_auth_type=='oauth2'}&access_token=<strong class="api-param-required">&lt;TOKEN&gt;</strong>{/if}{if $details.parameters|@count}{foreach from=$details.parameters item="param" name="params"}{if $param.documented}&{$param.name|escape}=<strong{if $param.required} class="api-param-required"{/if}>&lt;{$param.name|strtoupper|escape}&gt;</strong>{if !$smarty.foreach.params.last} \{/if}{/if}{/foreach}{/if}'</pre>
+<pre class="api-example-request">curl -X <strong>{$api_request_method|escape}</strong> '{$cfg.api_abs_root_url}<strong>{$cfg.api_endpoint}</strong>?method=<strong class="api-param-required">{$method|escape}</strong>{if $cfg.api_auth_type=='oauth2'}&access_token=<strong class="api-param-required">&lt;TOKEN&gt;</strong>{/if}{if $details.parameters|@count}{foreach from=$details.parameters item="param" name="params"}{if $param.documented}&{$param.name|escape}=<strong{if $param.required} class="api-param-required"{/if}>&lt;{$param.name|strtoupper|escape}&gt;</strong>{if !$smarty.foreach.params.last} {/if}{/if}{/foreach}{/if}'</pre>
 {else}
-<pre class="api-example-request">curl -X {$api_request_method|escape} {$cfg.api_abs_root_url}<strong>{$cfg.api_endpoint}</strong> -F "method=<strong class="api-param-required">{$method|escape}</strong>"{if $cfg.api_auth_type=='oauth2'} -F "access_token=<strong class="api-param-required">&lt;TOKEN&gt;</strong>" {/if}{if $details.parameters|@count}{foreach from=$details.parameters item="param" name="params"}{if $param.documented} -F "{$param.name|escape}=<strong{if $param.required} class="api-param-required"{/if}>&lt;{$param.name|strtoupper|escape}&gt;</strong>{if !$smarty.foreach.params.last} \{/if}{/if}{/foreach}{/if}</pre>
+<pre class="api-example-request">curl -X <strong>{$api_request_method|escape}</strong> {$cfg.api_abs_root_url}<strong>{$cfg.api_endpoint}</strong> -F "method=<strong class="api-param-required">{$method|escape}</strong>"{if $cfg.api_auth_type=='oauth2'} -F "access_token=<strong class="api-param-required">&lt;TOKEN&gt;</strong>" {/if}{if $details.parameters|@count}{foreach from=$details.parameters item="param" name="params"}{if $param.documented} -F "{$param.name|escape}=<strong{if $param.required} class="api-param-required"{/if}>&lt;{$param.name|strtoupper|escape}&gt;</strong>"{if !$smarty.foreach.params.last} {/if}{/if}{/foreach}{/if}</pre>
 {/if}
 
 {if $details.example_response}

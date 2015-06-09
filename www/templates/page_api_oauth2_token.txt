@@ -1,6 +1,8 @@
 {capture assign="page_title"}{$token.app.app_title} | Applications | API{/capture}
 {include file="inc_head.txt"}
 
+<div class="container">
+
 {capture assign="title"}Your auth token for the {$token.app.app_title} application{/capture}
 {capture assign="subtitle"}It was created {$token.created|date_format}{if $token.created != $token.last_modified} / It was last updated {$token.last_modified|date_format}{/if}{/capture}
 
@@ -24,24 +26,26 @@ OH NO! INVISIBLE ERROR CAT HISSES AT YOU...
 {else}
 {/if}
 
-<div class="api-sect">
+<div class="row api-sect">
 
-<form method="POST" action="{$cfg.abs_root_url}api/oauth2/tokens/{$token.app.api_key|escape}/">
+<form method="POST" action="{$cfg.abs_root_url}api/oauth2/tokens/{$token.app.api_key|escape}/" class="form" role="form">
 	{$crumb_key|crumb_input}
 	<input type="hidden" name="done" value="1" />
 
-<table class="api-key-or-token">
+<table class="table api-key-or-token">
 
 	{* application stuff (for the token) *}
 
 	{if $token.app.user_id==$cfg.user.id}
 	<tr>
-		<td>Application</td><td><a href="{$cfg.abs_root_url}api/keys/{$token.app.api_key|escape}/">{$token.app.app_title|escape}</a> <span class="api-thisisyou"> ⇽ you made this</span></td>
+		<td><label>Application</label></td>
+		<td><a href="{$cfg.abs_root_url}api/keys/{$token.app.api_key|escape}/">{$token.app.app_title|escape}</a> <span class="api-thisisyou"> ⇽ you made this</span></td>
 	</tr>
 
 	{else}
 	<tr>
-		<td>Application</td><td><strong>{$token.app.app_title|escape}</strong></td>
+		<td><label>Application</label></td>
+		<td><strong>{$token.app.app_title|escape}</strong></td>
 	</tr>
 	{/if}
 
@@ -50,17 +54,22 @@ OH NO! INVISIBLE ERROR CAT HISSES AT YOU...
 	<tr>
 		
 	<tr>
-		<td>Access Token</td><td class="api-credential">{$token.access_token|escape}</td>
+		<td><label>Access Token</label></td>
+		<td class="api-credential">
+			<strong>{$token.access_token|escape}</strong>
+			{if 0}<small>Remember...</small>{/if}
+		</td>
 	</tr>
 
 	<tr>
-		<td>Created</td><td>{$token.created|date_format|escape} at {$token.created|date_format:"%H:%M"|escape}</td>
+		<td><label>Created</label></td>
+		<td>{$token.created|date_format|escape} at {$token.created|date_format:"%H:%M"|escape}</td>
 	</tr>
 
 	<tr>
-		<td>Permissions</td>
+		<td><label for="perms">Permissions</label></td>
 		<td>
-		<select name="perms">
+		<select name="perms" class="form-control">
 {foreach from=$permissions item="label" key="id"}
 	 	<option value="{$id|escape}"{if $id==$token.perms} selected="true"{/if}>{$label|escape}</option>
 {/foreach}
@@ -82,7 +91,7 @@ OH NO! INVISIBLE ERROR CAT HISSES AT YOU...
 	</td>
 
 	<td>
-	<select name="update_ttl">
+	<select name="update_ttl" class="form-control">
 	<option />
 	{foreach from=$ttl_map item="label" key="ttl"}
 		<option value="{$ttl|escape}"{if $ttl==0} selected="true"{/if}>{$label|escape}</option>
@@ -93,16 +102,18 @@ OH NO! INVISIBLE ERROR CAT HISSES AT YOU...
 	</tr>
 
 	<tr class="api-admin">
-		<td>&nbsp;</td>
-		<td class="api-delete"><input type="checkbox" name="delete" /> <label for="delete">Actually, I'd like to delete this auth token entirely</label></td>
+		<td><label for="delete">Actually, I'd like to delete this auth token entirely</label></td>
+		<td class="api-delete"><input type="checkbox" name="delete" /></td>
 	</tr>
 
 	<tr class="api-admin">
 		<td>&nbsp;</td>
-		<td><input type="submit" value="UPDATE" />
+		<td><input type="submit" value="UPDATE" class="btn btn-primary btn-lg" />
 	</tr>
 
 </table>
+
+</div>
 
 </div>
 

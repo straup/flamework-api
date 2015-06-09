@@ -1,7 +1,7 @@
 {capture assign="page_title"}{$method} | Explorer | API{/capture}
 {include file="inc_head.txt"}
 
-<div class="container ap-method">
+<div class="container api-method">
 
 {include file="inc_api_header.txt" title=$method}
 
