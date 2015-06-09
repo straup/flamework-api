@@ -71,12 +71,21 @@
 
 		# $GLOBALS['timings']['api_config_methods_time'] = $time;
 
-		api_config_apply_blessings();
+		api_config_init_blessings();
+
+		if ($GLOBALS['this_is_webpage']){
+
+			$req_features = array("api", "api_site_keys", "api_site_tokens");
+
+			if (features_is_enabled($req_features)){
+				api_config_init_site_keys();
+			}
+		}
 	}
 
 	#################################################################
 
-	function api_config_apply_blessings(){
+	function api_config_init_blessings(){
 
 		# $GLOBALS['timing_keys']["api_blessings"] = "API blessings";
 		# $GLOBALS['timings']['api_blessings_count'] = 0;
@@ -299,6 +308,26 @@
 		else {}
 
 		return 1;
+	}
+
+	#################################################################
+
+	function api_config_init_site_keys(){
+
+		$start = microtime_ms();
+
+		login_check_login();
+
+		$token = api_oauth2_access_tokens_fetch_site_token($GLOBALS['cfg']['user']);
+		$GLOBALS['smarty']->assign_by_ref("site_token", $token['access_token']);
+
+		$end = microtime_ms();
+		$time = $end - $start; 
+
+		$GLOBALS['timing_keys']['user_init'] = 'WWW setup';
+		$GLOBALS['timings']['user_init_count'] = 1;
+		$GLOBALS['timings']['user_init_time'] = $time;
+
 	}
 
 	#################################################################

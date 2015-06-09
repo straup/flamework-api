@@ -13,12 +13,6 @@ cp ${API}/www/*.php ${PROJECT}/www/
 echo "copying css files to ${PROJECT}"
 cp ${API}/www/css/*.css ${PROJECT}/www/css/
 
-echo "" > ${PROJECT}/www/css/main.css
-echo "/* flamework-api */" >> ${PROJECT}/www/css/main.css
-echo "@import url('/css/api.css');" >> ${PROJECT}/www/css/main.css
-
-echo "[NOTE] a CSS @import stamement for '/css/api.css' has been added to main.css; adjust as needed"
-
 echo "copying templates to ${PROJECT}"
 cp ${API}/www/templates/*.txt ${PROJECT}/www/templates/
 
