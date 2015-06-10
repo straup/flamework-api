@@ -1,3 +1,9 @@
+### 20150609_db_main.schema
+
+* Add `created_by` and `expires` to ApiKeys
+
+* Add `access_token_secret` and `disabled` to OAuth2AccessTokens
+
 ### 20130711_db_main.schema
 
 * Track API key role IDs in the OAuth2AccessTokens table

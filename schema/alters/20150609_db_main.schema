@@ -1,0 +1,4 @@
+ALTER TABLE `ApiKeys` ADD `created_by` INT(11) UNSIGNED NOT NULL;
+ALTER TABLE `ApiKeys` ADD `expires` INT(11) UNSIGNED NOT NULL;
+ALTER TABLE `OAuth2AccessTokens` ADD `access_token_secret` VARCHAR(64) NOT NULL;
+ALTER TABLE `OAuth2AccessTokens` ADD `disabled` INT(11) UNSIGNED NOT NULL;
