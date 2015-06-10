@@ -10,17 +10,17 @@ PROJECT=$1
 echo "copying application files to ${PROJECT}"
 cp ${API}/www/*.php ${PROJECT}/www/
 
-echo "copying css files to ${PROJECT}"
+echo "copying css files to ${PROJECT}; you will need to include them in your templates manually"
 cp ${API}/www/css/*.css ${PROJECT}/www/css/
+
+echo "copying javascript files to ${PROJECT}; you will need to include them in your templates manually"
+cp ${API}/www/javascript/*.css ${PROJECT}/www/javascript/
 
 echo "copying templates to ${PROJECT}"
 cp ${API}/www/templates/*.txt ${PROJECT}/www/templates/
 
 echo "copying library code to ${PROJECT}"
 cp ${API}/www/include/*.php ${PROJECT}/www/include/
-
-echo "copying script (bin) files to ${PROJECT}"
-cp ${API}/bin/*.php ${PROJECT}/bin/
 
 YMD=`date "+%Y%m%d"`
 mkdir ${PROJECT}/schema/alters
