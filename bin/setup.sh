@@ -30,8 +30,10 @@ echo "copying database schemas to ${PROJECT}; you will still need to run databas
 cat ${API}/schema/db_main.schema >> ${PROJECT}/schema/db_main.schema
 cat ${API}/schema/db_main.schema >> ${PROJECT}/schema/alters/${YMD}.db_main.schema
 
-echo "[NOTE] please add/update the contents of '${API}/www/.htaccess' to your ${PROJECT}/www/.htacess file"
+echo "" >> ${PROJECT}/www/.htaccess
+cat ${API}/www/.htaccess.api >> ${PROJECT}/www/.htaccess
+echo "" >> ${PROJECT}/www/.htaccess
 
-echo "[NOTE] please add/update the contents of '${API}/include/config.php.example' to your ${PROJECT}/www/include/config.php file"
-
-# TO DO: something about `init.php.site-keys`
+echo "" >> ${PROJECT}/www/include/config.php
+cat ${API}/www/include/config.php.api >> ${PROJECT}/www/include/config.php
+echo "" >> ${PROJECT}/www/include/config.php
