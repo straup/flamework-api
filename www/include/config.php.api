@@ -42,6 +42,25 @@
 	$GLOBALS['cfg']['api_explorer_tokens_ttl'] = 28000;		# 8 hours
 	$GLOBALS['cfg']['api_explorer_tokens_user_ttl'] = 28000;	# 8 hours
 
+	# We test this in lib_api_auth_oauth2.php to see whether or
+	# not we need to throw an error - it's possible that we want
+	# this to be computed in lib_api_config for example but right
+	# now we're explicit about everything (20141114/straup)
+
+	$GLOBALS['cfg']['enable_feature_api_oauth2_tokens_null_users'] = 1;
+
+	# As in API key roles - see also: api_keys_roles_map()
+	# (20141114/straup)
+
+	$GLOBALS['cfg']['api_oauth2_tokens_null_users_allowed_roles'] = array(
+		'site',
+		'api_explorer',
+		'infrastructure',
+	);
+
+	$GLOBALS['cfg']['enable_feature_api_cors'] = 1;
+	$GLOBALS['cfg']['api_cors_allow_origin'] = '*';
+
 	# API pagination
 
 	$GLOBALS['cfg']['api_per_page_default'] = 100;
