@@ -185,17 +185,16 @@ $(document).ready(function(){
 
 		$("#api-req").html(htmlspecialchars(req));
 
-	var on_success = function(rsp){
+		var on_success = function(rsp){
 
-		var json = JSON.stringify(rsp, null, '\t');
-		var html = htmlspecialchars(json);
+			var json = JSON.stringify(rsp, null, '\t');
+			var html = htmlspecialchars(json);
 
-		$("#api-res").html(html);
+			$("#api-res").html(html);
 			
-		show_results();
-		show_caveat();
-	};
-
+			show_results();
+			show_caveat();
+		};
 
 		var on_error = function(rsp){
 

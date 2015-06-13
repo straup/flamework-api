@@ -58,7 +58,7 @@ function flamework_api_call(method, data, on_success, on_error){
 	'success': dothis_onsuccess,
 	'error': dothis_onerror
     };
-    
+
     if (ima_formdata){
 	args['cache'] = false;
 	args['contentType'] = false;
@@ -66,6 +66,7 @@ function flamework_api_call(method, data, on_success, on_error){
     }
     
     $.ajax(args);	    
+    return false;
 }
 
 function flamework_api_endpoint(){
