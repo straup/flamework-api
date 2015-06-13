@@ -14,7 +14,7 @@ echo "copying css files to ${PROJECT}; you will need to include them in your tem
 cp ${API}/www/css/*.css ${PROJECT}/www/css/
 
 echo "copying javascript files to ${PROJECT}; you will need to include them in your templates manually"
-cp ${API}/www/javascript/*.css ${PROJECT}/www/javascript/
+cp ${API}/www/javascript/*.js ${PROJECT}/www/javascript/
 
 echo "copying templates to ${PROJECT}"
 cp ${API}/www/templates/*.txt ${PROJECT}/www/templates/
