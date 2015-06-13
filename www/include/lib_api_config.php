@@ -314,6 +314,9 @@
 
 	function api_config_init_site_keys(){
 
+		loadlib("api_keys");
+		loadlib("api_oauth2_access_tokens");
+
 		$start = microtime_ms();
 
 		login_check_login();

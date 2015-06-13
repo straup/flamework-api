@@ -32,7 +32,7 @@
 <div class="api-methods col-md-5">
 
 {foreach from=$method_classes item="class_details" key="class" name="classes"}
-<div class="row api-sect {if $class|@api_methods_is_class_special_snowflake}api-sect-special-snowflake{/if} api-sect-{$class_details.prefix|escape} api-sect-{$class|replace:".":"-"|escape}">
+<div class="row api-sect api-sect-{$class_details.prefix|escape} api-sect-{$class|replace:".":"-"|escape}">
 
 <a name="{$class|@escape}"></a>
 <h3>{$class|escape}{if 0} {$smarty.foreach.classes.index+1} / {$count_split}{/if}</h3>

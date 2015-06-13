@@ -2,6 +2,7 @@
 
 	include("include/init.php");
 	loadlib("api");
+	loadlib("api_methods");
 
 	if (! $GLOBALS['cfg']['enable_feature_api']){
 		error_disabled();
