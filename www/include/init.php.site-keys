@@ -1,8 +1,9 @@
-	# This needs to be added to your init.php file
+	# start of flamework-api stuff for API site keys
 
 	if ($this_is_webpage){
 
-	        login_check_login();
+	   	# we assume login_check_login has been called above already
+		# (20160121/thisisaaronland)
 
 	        # API site key/token stuff
 
@@ -20,3 +21,5 @@
 			}
 		}
 	}
+
+	# end of flamework-api stuff for API site keys

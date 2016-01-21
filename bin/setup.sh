@@ -7,33 +7,43 @@ API=`dirname $WHEREAMI`
 
 PROJECT=$1
 
-echo "copying application files to ${PROJECT}"
+echo "# copying application files to ${PROJECT}"
 cp ${API}/www/*.php ${PROJECT}/www/
 
-echo "copying css files to ${PROJECT}; you will need to include them in your templates manually"
+echo "# copying css files to ${PROJECT}; you will need to include them in your templates manually"
 cp ${API}/www/css/*.css ${PROJECT}/www/css/
 
-echo "copying javascript files to ${PROJECT}; you will need to include them in your templates manually"
+echo "# copying javascript files to ${PROJECT}; you will need to include them in your templates manually"
 cp ${API}/www/javascript/*.js ${PROJECT}/www/javascript/
 
-echo "copying templates to ${PROJECT}"
+echo "# copying templates to ${PROJECT}"
 cp ${API}/www/templates/*.txt ${PROJECT}/www/templates/
 
-echo "copying library code to ${PROJECT}"
+echo "# copying library code to ${PROJECT}"
 cp ${API}/www/include/*.php ${PROJECT}/www/include/
 
 YMD=`date "+%Y%m%d"`
 mkdir ${PROJECT}/schema/alters
 
-echo "copying database schemas to ${PROJECT}; you will still need to run database alters manually"
+echo "# copying database schemas to ${PROJECT}; you will still need to run database alters manually"
 
 cat ${API}/schema/db_main.schema >> ${PROJECT}/schema/db_main.schema
 cat ${API}/schema/db_main.schema >> ${PROJECT}/schema/alters/${YMD}.db_main.schema
+
+echo "# updating root .htaccess file with API configs"
 
 echo "" >> ${PROJECT}/www/.htaccess
 cat ${API}/www/.htaccess.api >> ${PROJECT}/www/.htaccess
 echo "" >> ${PROJECT}/www/.htaccess
 
+echo "# updating config.php with API configs"
+
 echo "" >> ${PROJECT}/www/include/config.php
 cat ${API}/www/include/config.php.api >> ${PROJECT}/www/include/config.php
 echo "" >> ${PROJECT}/www/include/config.php
+
+echo "# updating init.php with automagic site key configs"
+
+echo "" >> ${PROJECT}/www/include/init.php
+cat ${API}/www/include/init.php.site-keys >> ${PROJECT}/www/include/init.php
+echo "" >> ${PROJECT}/www/include/init.php
