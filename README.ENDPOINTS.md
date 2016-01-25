@@ -77,12 +77,16 @@ A list of OAuth2 access tokens for a (logged in) user.
 Review of update an existing OAuth2 access token. (Note how we are passing
 around the API key in URLs and not the actual access token.)
 
+## API Explorer
+
+### api/methods/explore/
+
+### api/methods/<METHOD>/explore/
+
 ### rest/
 
 This is the actual API dispatch/endpoint. Code points here.
 
 # To do
-
-* A good web-based API explorer
 
 * Admin pages for viewing API keys and tokens
