@@ -89,7 +89,7 @@ hoop-jumping of delegated auth.
 An optional flag to require that people pass OAuth2 access tokens around in the
 HTTP Authentication header.
 
-### $GLOBALS['cfg']['api_oauth2_allow_get_parameters'] = 0;
+### $GLOBALS['cfg']['api_oauth2_allow_get_parameters'] = 1;
 
 Allow people to make OAuth2 requests using the HTTP GET method. There are couple
 of things you need to be aware of if you enable this:
