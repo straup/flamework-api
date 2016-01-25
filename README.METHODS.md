@@ -1,5 +1,7 @@
 # API methods
 
+_If you are reading this then the documentation below should be considered mostly-correct but it still in flux and may have errors._
+
 API methods, and related specifics, are defined as a dictionary where the keys
 are method names and the values are the method details.
 
