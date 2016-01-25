@@ -81,7 +81,7 @@ around the API key in URLs and not the actual access token.)
 
 ### api/methods/explore/
 
-### api/methods/<METHOD>/explore/
+### api/methods/:METHOD:/explore/
 
 ### rest/
 
