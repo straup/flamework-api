@@ -85,7 +85,14 @@ _This is not necessary to declare if you are using OAuth2._
 ### requires_crumb
 
 A boolean flag indicating whether or a method requires that a valid (Flamework)
-crumb ba passed (and validated).
+crumb be passed (and validated).
+
+API crumbs are all generated with the same name (`api`) but then appended with a "target" that matches the name of the API method itself. For example:
+
+```
+$crumb_api = crumb_generate('api', 'example.helloWorld');
+$GLOBALS['smarty']->assign("crumb_api", $crumb_api);
+```
 
 ### requires_blessing
 
