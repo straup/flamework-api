@@ -46,6 +46,9 @@ RewriteRule  ^api/methods/explore/?$		api_methods.php	[L]
 RewriteRule  ^api/methods/(.*)/explore/?$	api_method_explore.php?method=$1&%{QUERY_STRING}	[L]
 RewriteRule  ^api/methods/(.*)/?$		api_method.php?method=$1&%{QUERY_STRING}		[L]
 
+RewriteRule  ^api/formats/?$			api_formats.php	[L]
+RewriteRule  ^api/formats/(.*)/?$		api_format.php?format=$1	[L]
+
 RewriteRule  ^api/keys/?$						api_keys.php?%{QUERY_STRING} [L]
 RewriteRule  ^api/keys/register/?$					api_keys_register.php?%{QUERY_STRING} [L]
 RewriteRule  ^api/keys/([a-zA-Z0-9]+)/?$				api_key.php?api_key=$1&%{QUERY_STRING} [L]
