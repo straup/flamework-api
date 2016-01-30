@@ -268,7 +268,7 @@
 	# 	"documented" => 0,
 	#	"enabled" => 1,
 	#	"requires_blessing" => 0,
-	#	"requires_role" => array("site"),
+	#	"requires_key_role" => array("site"),
 	#	"requires_user_role" => array("staff"),
 	#
 	# As in: require a site key for someone who is staff
