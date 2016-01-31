@@ -72,7 +72,7 @@
 
 <div id="results" style="margin-top:2em;display:none;">
 
-<h3>Request <button class="pull-right" id="do-it-again">Modify this request</button></h3>
+<h3>Request <button class="btn pull-right" id="do-it-again">Modify this request</button></h3>
 <pre id="api-req"></pre>
 
 <small style="display:block; margin-top:1em; margin-bottom:1em;">
