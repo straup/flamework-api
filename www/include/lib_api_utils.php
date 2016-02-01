@@ -118,7 +118,7 @@
 
 		if (count($more['ensure_mimetype'])){
 
-			if (! in_array($more['ensure_mimetype'], $mime)){
+			if (! in_array($mime, $more['ensure_mimetype'])){
 				return array('ok' => 0, 'error' => "Invalid mime type");
 			}
 		}
