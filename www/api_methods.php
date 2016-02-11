@@ -53,6 +53,9 @@
 
 	$GLOBALS['smarty']->assign_by_ref("method_classes", $method_classes);
 
+	$formats = $GLOBALS['cfg']['api']['formats'];
+	$GLOBALS['smarty']->assign_by_ref("response_formats", $formats);
+
 	if (get_isset("print")){
 		$GLOBALS['smarty']->display("page_api_methods_print.txt");
 		exit();
