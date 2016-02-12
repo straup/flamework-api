@@ -8,10 +8,21 @@
 		$GLOBALS['cfg']['api_server_name'] = parse_url($GLOBALS['cfg']['abs_root_url'], PHP_URL_HOST);
 		$GLOBALS['cfg']['api_server_port'] = parse_url($GLOBALS['cfg']['abs_root_url'], PHP_URL_PORT);
 
-                if ($GLOBALS['cfg']['api_server_scheme'] == 'http' && $GLOBALS['cfg']['api_server_port'] != 80 ||
-                        $GLOBALS['cfg']['api_server_scheme'] == 'https' && $GLOBALS['cfg']['api_server_port'] != 443) {
-                        $GLOBALS['cfg']['api_server_name'] .= ':' . $GLOBALS['cfg']['api_server_port'];
-                }
+		if ($GLOBALS['cfg']['api_server_port']){
+
+			# these are chunked in to separate statements just because they are
+			# long and hard to read as a single test (20160212/thisisaaronland)
+
+	                if (($GLOBALS['cfg']['api_server_scheme'] == 'http') && ($GLOBALS['cfg']['api_server_port'] != 80)){
+
+				$GLOBALS['cfg']['api_server_name'] .= ':' . $GLOBALS['cfg']['api_server_port'];
+
+			} else if (($GLOBALS['cfg']['api_server_scheme'] == 'https') && ($GLOBALS['cfg']['api_server_port'] != 443)){
+
+				$GLOBALS['cfg']['api_server_name'] .= ':' . $GLOBALS['cfg']['api_server_port'];
+
+			} else {}
+		}
 
 		# If I have an API specific subdomain/prefix then check to see if I am already
 		# running on that host; if not then update the 'api_server_name' config
