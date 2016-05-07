@@ -49,6 +49,10 @@
 			return array('ok' => 0, 'error' => 'Invalid access token', 'error_code' => 400);
 		}
 
+		if ($token_row['disabled']){
+			return array('ok' => 0, 'error' => 'Access token is disabled', 'error_code' => 502);
+		}
+
 		if (($token_row['expires']) && ($token_row['expires'] < time())){
 			return array('ok' => 0, 'error' => 'Access token has expired', 'error_code' => 400);
 		}
@@ -67,7 +71,9 @@
 		if (isset($method['requires_perms'])){
 
 			if ($token_row['perms'] < $method['requires_perms']){
-				return array('ok' => 0, 'error' => 'Insufficient permissions', 'error_code' => 403);
+				$perms_map = api_oauth2_access_tokens_permissions_map();
+				$required = $perms_map[$method['requires_perms']];
+				return array('ok' => 0, 'error' => "Insufficient permissions, method requires a token with '{$required}' permissions", 'error_code' => 403);
 			}
 		}
 
@@ -78,10 +84,19 @@
 		$ensure_user = 1;
 		$user = null;
 
-		if (features_is_enabled("api_site_keys", "api_site_tokens")){
+		if ((! $token_row['user_id']) && ($key_row) && (features_is_enabled("api_oauth2_tokens_null_users"))){
 
-			# check that API key is a site key
-			$ensure_user = ($token_row['user_id']) ? 1 : 0;
+			$key_role_id = $key_row['role_id'];
+			$roles_map = api_keys_roles_map('string keys');
+
+			$valid_roles = $GLOBALS['cfg']['api_oauth2_tokens_null_users_allowed_roles'];
+			$valid_roles_ids = array();
+
+			foreach ($valid_roles as $role){
+				$valid_roles_ids[] = $roles_map[$role];
+			}
+
+			$ensure_user = (($key_role_id) && (in_array($key_role_id, $valid_roles_ids))) ? 0 : 1;
 		}
 
 		if ($ensure_user){

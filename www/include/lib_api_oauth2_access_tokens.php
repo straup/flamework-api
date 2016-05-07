@@ -11,6 +11,7 @@
 			'0' => 'login',
 			'1' => 'read',
 			'2' => 'write',
+			'3' => 'delete',
 		);
 
 		if ($string_keys){
@@ -18,6 +19,14 @@
 		}
 
 		return $map;
+	}
+
+	#################################################################
+
+	function api_oauth2_access_tokens_permissions_id_to_label($id){
+
+		$map = api_oauth2_access_tokens_permissions_map();
+		return (isset($map[$id])) ? $map[$id] : null;
 	}
 
 	#################################################################
@@ -45,6 +54,30 @@
 	function api_oauth2_access_tokens_is_valid_permission($perm, $str_perm=0){
 		$map = api_oauth2_access_tokens_permissions_map($str_perm);
 		return (isset($map[$perm])) ? 1 : 0;
+	}
+
+	#################################################################
+
+	function api_oauth2_access_tokens_get_by_id($id){
+
+		$cache_key = "oauth2_access_token_id_{$id}";
+		$cache = cache_get($cache_key);
+
+		if ($cache['ok']){
+		 	return $cache['data'];
+		}
+
+		$enc_id = AddSlashes($id);
+
+		$sql = "SELECT * FROM OAuth2AccessTokens WHERE id='{$enc_id}'";
+		$rsp = db_fetch($sql);
+		$row = db_single($rsp);
+
+		if ($rsp['ok']){
+			cache_set($cache_key, $row);
+		}
+
+		return $row;
 	}
 
 	#################################################################
@@ -215,6 +248,20 @@
 
 	#################################################################
 
+	function api_oauth2_access_tokens_disable(&$token){
+		$update = array('disabled' => time());
+		return api_oauth2_access_tokens_update($token, $update);
+	}
+
+	#################################################################
+
+	function api_oauth2_access_tokens_enable(&$token){
+		$update = array('disabled' => 0);
+		return api_oauth2_access_tokens_update($token, $update);
+	}
+
+	#################################################################
+
 	# THERE IS NO UNDO...
 
 	function api_oauth2_access_tokens_delete(&$token){
@@ -251,6 +298,7 @@
 
 		$cache_keys = array(
 			"oauth2_access_token_{$token['access_token']}",
+			"oauth2_access_token_id_{$token['id']}",
 			"oauth2_access_token_uk_{$token['user_id']}_{$token['api_key_id']}",
 		);
 
@@ -274,18 +322,57 @@
 
 		$site_token = api_oauth2_access_tokens_get_site_token($user);
 
-		if (($site_token) && ($site_token['expires'] <= $now)){
+		if ($site_token){
 
-			$rsp = api_oauth2_access_tokens_delete($site_token);
+			$valid_key = 1;
+			$valid_token = 1;
 
-			if ($rsp['ok']){
+			$key = api_keys_get_by_id($site_token['api_key_id']);
+
+			if (! $key){
+				$valid_key = 0;
+			}
+
+			else if ($key['deleted']){
+				$valid_key = 0;
+			}
+
+			else if (($key['expires']) && ($key['expires'] <= $now)){
+				$valid_key = 0;
+			}
+
+			else if ($site_token['expires'] <= $now){
+				$valid_token = 0;
+			}
+
+			# Now we check to see if either the key or the token will
+			# expire in <some unknown amount of time that a user will
+			# stay on the page...> and just create new ones if so.
+
+			else {
+
+				$ttl_key = $key['expires'] - $now;
+				$ttl_token = $site_token['expires'] - $now;
+
+				if ($ttl_key < 300){
+					$valid_key = 0;
+				}  
+
+				if ($ttl_token < 300){
+					$valid_token = 0;
+				}  
+			}
+
+			if ((! $valid_key) || (! $valid_token)){
+
+				$rsp = api_oauth2_access_tokens_delete($site_token);
 
 				$user_id = ($user) ? $user['id'] : 0;
 				$cache_key = "oauth2_access_token_site_{$user_id}";
 				cache_unset($cache_key);
-			}
 
-			$site_token = null;
+				$site_token = null;
+			}
 		}
 
 		# TO DO: error handling / reporting
@@ -308,8 +395,8 @@
 		$cache_key = "oauth2_access_token_site_{$user_id}";
 		$cache = cache_get($cache_key);
 
-		if ($cache['ok']){
-		#	return $cache['data'];
+		if (($cache['ok']) && ($cache['data'])){
+			return $cache['data'];
 		}
 
 		$site_key = api_keys_fetch_site_key();
@@ -374,6 +461,188 @@
 		}
 
 		return $rsp;
+	}
+
+	#################################################################
+
+	# Infrastructure tokens
+
+	function api_oauth2_access_tokens_create_infrastructure_token(&$api_key, $perms, $ttl=0){
+
+		$id = dbtickets_create(64);
+
+		$token = api_oauth2_access_tokens_generate_token();
+
+		$expires = 0;
+
+		if ($ttl){
+			$now = time();
+			$expires = $now + $ttl;
+		}
+
+		$row = array(
+			'id' => $id,
+			'perms' => $perms,
+			'api_key_id' => $api_key['id'],
+			'api_key_role_id' => $api_key['role_id'],
+			'user_id' => 0,
+			'access_token' => $token,
+			'created' => $now,
+			'last_modified' => $now,
+			'expires' => $expires,
+		);
+
+		$insert = array();
+
+		foreach ($row as $k => $v){
+			$insert[$k] = AddSlashes($v);
+		}
+
+		$rsp = db_insert('OAuth2AccessTokens', $insert);
+
+		if ($rsp['ok']){
+			$rsp['token'] = $row;
+		}
+
+		return $rsp;
+	}
+
+	#################################################################
+
+	# API explorer
+
+	function api_oauth2_access_tokens_fetch_api_explorer_token($user=null){
+
+		$now = time();
+
+		$api_explorer_token = api_oauth2_access_tokens_get_api_explorer_token($user);
+
+		if (($api_explorer_token) && ($api_explorer_token['expires'] <= $now)){
+
+			$rsp = api_oauth2_access_tokens_delete($api_explorer_token);
+
+			if ($rsp['ok']){
+
+				$user_id = ($user) ? $user['id'] : 0;
+				$cache_key = "oauth2_access_token_api_explorer_{$user_id}";
+				cache_unset($cache_key);
+			}
+
+			$api_explorer_token = null;
+		}
+
+		# TO DO: error handling / reporting
+
+		if (! $api_explorer_token){
+
+			$rsp = api_oauth2_access_tokens_create_api_explorer_token($user);
+			$api_explorer_token = $rsp['token'];
+		}
+
+		return $api_explorer_token;
+	}
+
+	#################################################################
+
+	function api_oauth2_access_tokens_get_api_explorer_token($user=null){
+
+		$user_id = ($user) ? $user['id'] : 0;
+		
+		$cache_key = "oauth2_access_token_api_explorer_{$user_id}";
+		$cache = cache_get($cache_key);
+
+		if ($cache['ok']){
+			# return $cache['data'];
+		}
+
+		$site_key = api_keys_fetch_api_explorer_key();
+
+		$enc_user = AddSlashes($user_id);
+		$enc_key = AddSlashes($site_key['id']);
+
+		$sql = "SELECT * FROM OAuth2AccessTokens WHERE user_id='{$enc_user}' AND api_key_id='{$enc_key}'  AND (expires=0 OR expires > UNIX_TIMESTAMP(NOW())) LIMIT 1";
+
+		$rsp = db_fetch($sql);
+		$row = db_single($rsp);
+
+		if ($rsp['ok']){
+			cache_set($cache_key, $row);
+		}
+
+		return $row;
+	}
+
+	#################################################################
+
+	function api_oauth2_access_tokens_create_api_explorer_token($user=null){
+
+		$site_key = api_keys_fetch_api_explorer_key();
+
+		$id = dbtickets_create(64);
+
+		$user_id = ($user) ? $user['id'] : 0;
+
+		$token = api_oauth2_access_tokens_generate_token();
+
+		$ttl = ($user) ? $GLOBALS['cfg']['api_explorer_tokens_user_ttl'] : $GLOBALS['cfg']['api_explorer_tokens_ttl'];
+		$now = time();
+
+		$expires = $now + $ttl;
+
+		$perms_map = api_oauth2_access_tokens_permissions_map('string keys');
+		$perms = ($user_id) ? $perms_map['read'] : $perms_map['login'];
+
+		$row = array(
+			'id' => $id,
+			'perms' => $perms,
+			'api_key_id' => $site_key['id'],
+			'api_key_role_id' => $site_key['role_id'],
+			'user_id' => $user_id,
+			'access_token' => $token,
+			'created' => $now,
+			'last_modified' => $now,
+			'expires' => $expires,
+		);
+
+		$insert = array();
+
+		foreach ($row as $k => $v){
+			$insert[$k] = AddSlashes($v);
+		}
+
+		$rsp = db_insert('OAuth2AccessTokens', $insert);
+
+		if ($rsp['ok']){
+			$rsp['token'] = $row;
+		}
+
+		return $rsp;
+	}
+
+	#################################################################
+
+	function api_oauth2_access_tokens_is_expired(&$token){
+
+		$now = time();
+		return (($token['expires']) && ($token['expires'] <= $now)) ? 1 : 0;
+	}
+
+	#################################################################
+
+	function api_oauth2_access_tokens_is_disabled(&$token){
+
+		$now = time();
+		return (($token['disabled']) && ($token['disabled'] <= $now)) ? 1 : 0;
+	}
+
+	#################################################################
+
+	function api_oauth2_access_tokens_is_infrastructure_token(&$token){
+
+		$map = api_keys_roles_map();
+		$role = $token['api_key_role_id'];
+
+		return ($map[$role] == "infrastructure") ? 1 : 0;
 	}
 
 	#################################################################

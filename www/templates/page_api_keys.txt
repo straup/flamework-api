@@ -1,6 +1,8 @@
 {capture assign="page_title"}Your API keys | API{/capture}
 {include file="inc_head.txt"}
 
+<div class="container">
+
 {capture assign="key_count"}{$pagination.total_count}{/capture}
 
 {capture assign="subtitle"}
@@ -13,9 +15,7 @@
 
 {include file="inc_api_header.txt" title="Your API keys"}
 
-<div class="api-sect">
-
-<h2>API keys</h2>
+<div class="api-sect row">
 
 <ul class="api-list-o-things">
 {foreach from=$keys item="row"}
@@ -31,4 +31,7 @@
 </div>
 
 {include file="inc_pagination.txt"}
+
+</div>
+
 {include file="inc_foot.txt"}

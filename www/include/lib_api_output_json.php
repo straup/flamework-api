@@ -16,7 +16,6 @@
 
 		$out = array('error' => array(
 			'code' => $code,
-			'error' => $msg,	# deprecated - need to update all the JS...
 			'message' => $msg,
 		));
 

@@ -4,13 +4,21 @@
 
 	# HEY LOOK! RUNNING CODE!!!
 
+	$start = microtime_ms();
+
 	loadlib("api_config");
 	api_config_init();
+
+	$end = microtime_ms();
+	$time = $end - $start;
+
+	$GLOBALS['timing_keys']["api_init"] = "API init";
+	$GLOBALS['timings']['api_init_count'] += 1;
+	$GLOBALS['timings']['api_init_time'] += $time;
 
  	#################################################################
 
 	loadlib("api_output");
-	loadlib("api_output_utils");
 	loadlib("api_log");
 
 	loadlib("api_methods");
@@ -28,18 +36,29 @@
 			api_output_error(999, 'API disabled');
 		}
 
+		# Necessary? Also causes PHP 5.5 to freak out
+		# with older versions of lib_filter...
+		# (20140122/straup)
+
 		$method = filter_strict($method);
+
 		$api_key = request_str("api_key");
 		$access_token = request_str("access_token");
 
 		# Log the basics
 
+		$addr = remote_addr();
+
+		$params = api_log_request_params();
+
 		api_log(array(
-			'api_key' => $api_key,
 			'method' => $method,
-			'access_token' => $access_token,
-			'remote_addr' => $_SERVER['REMOTE_ADDR'],
+			'params' => $params,
+			'access_token_hash' => sha1($access_token),
+			'remote_addr' => $addr,
 		));
+
+		apache_setenv("API_METHOD", $method);
 
 		$methods = $GLOBALS['cfg']['api']['methods'];
 
@@ -48,7 +67,6 @@
 			api_output_error(404, "Method '{$enc_method}' not found");
 		}
 
-		apache_setenv("API_METHOD", $method);
 
 		$method_row = $methods[$method];
 
@@ -71,9 +89,17 @@
 
 		if (isset($method_row['request_method'])){
 
-			if ($_SERVER['REQUEST_METHOD'] != $method_row['request_method']){
+			$allowed = $method_row['request_method'];
+
+			if (! is_array($allowed)){
+				$allowed = array($allowed);
+			}
+
+			if (! in_array($_SERVER['REQUEST_METHOD'], $allowed)){
 				api_output_error(405, 'Method not allowed');
 			}
+
+			
 		}
 
 		# Okay – now we get in to validation and authorization. Which means a
@@ -92,6 +118,8 @@
 
 			$key_row = api_keys_get_by_key($api_key);
 			api_keys_utils_ensure_valid_key($key_row);
+
+			api_log(array('api_key_id' => $key_row['id']));
 		}
 
 		# Second auth-y bits
@@ -100,14 +128,17 @@
 
 		if (isset($auth_rsp['api_key'])){
 			$key_row = $auth_rsp['api_key'];
+			api_log(array('api_key_id' => $key_row['id']));
 		}
 
 		if (isset($auth_rsp['access_token'])){
 			$token_row = $auth_rsp['access_token'];
+			api_log(array('auth_token_id' => $token_row['id']));
 		}
 	
 		if ($auth_rsp['user']){
 			$GLOBALS['cfg']['user'] = $auth_rsp['user'];
+			api_log(array('user_id' => $auth_rsp['user']['id']));
 		}
 
 		apache_setenv("API_KEY", $key_row['api_key']);
@@ -116,7 +147,7 @@
 
 		# Roles - for API keys (things like only the site keys)
 
-		api_config_ensure_role($method_row, $key_row, $token_row);
+		api_config_ensure_roles($method_row, $key_row, $token_row);
 
 		# Blessings and other method specific access controls
 
@@ -142,7 +173,6 @@
 		}
 
 		call_user_func($func);
-
 		exit();
 	}
 

@@ -2,8 +2,15 @@
 
 	include("include/init.php");
 	loadlib("api");
+	loadlib("api_methods");
 
-	features_ensure_enabled(array("api", "api_documentation"));
+	if (! $GLOBALS['cfg']['enable_feature_api']){
+		error_disabled();
+	}
+
+	if (! $GLOBALS['cfg']['enable_feature_api_documentation']){
+		error_disabled();
+	}
 
 	$method_classes = array();
 	$method_names = array();
@@ -39,10 +46,15 @@
 	}
 
 	foreach ($method_classes as $class_name => $ignore){
-		sort($method_classes[$class_name]['methods']);
+		usort($method_classes[$class_name]['methods'], function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
 	}
 
 	$GLOBALS['smarty']->assign_by_ref("method_classes", $method_classes);
+
+	$formats = $GLOBALS['cfg']['api']['formats'];
+	$GLOBALS['smarty']->assign_by_ref("response_formats", $formats);
 
 	if (get_isset("print")){
 		$GLOBALS['smarty']->display("page_api_methods_print.txt");

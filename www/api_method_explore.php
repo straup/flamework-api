@@ -4,6 +4,7 @@
 
 	loadlib("api");
 	loadlib("api_spec");
+	loadlib("api_methods");
 
 	features_ensure_enabled(array(
 		"api",

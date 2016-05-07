@@ -1,50 +1,58 @@
 {capture assign="page_title"}{$key.app_title} | {$key.api_key} | API{/capture}
 {include file="inc_head.txt"}
 
+<div class="container">
+
 {include file="inc_api_header.txt" title=$key.app_title}
 
 {if $smarty.get.success}
-<p class="confirm">Hooray! Here is your new API key.</p>
+<div class="row api-sect">
+<p class="alert alert-success">Hooray! Here is your new API key.</p>
+</div>
 {/if}
 
 {if $do_update}
-
+<div class="row api-sect">
 {if $update_ok}
-	<p class="confirm">You API key has been updated. Pow!</p>
+	<p class="alert alert-success">You API key has been updated. Pow!</p>
 {else}
-	<p class="error">There was a problem updating your API key. The robots has reported the following error: {$error|escape}</p>
+	<p class="alert alert-danger">There was a problem updating your API key. The robots has reported the following error: {$error|escape}</p>
 {/if}
 
 {elseif $error}
 
-<p class="error">
+<p class="alert alert-danger">
 {if $error=='no_title'}Your API key must have a name
 {elseif $error=='no_description'}Your API key must have a description
 {else}INVISIBLE ERROR CAT HISSES AT YOU: {$error|escape}
 {/if}
 </p>
 
+</div>
+
 {else}{/if}
 
-<div class="api-sect">
+<div class="row api-sect">
 
-<form method="POST" action="{$cfg.abs_root_url}api/keys/{$key.api_key|escape}/">
+<form method="POST" action="{$cfg.abs_root_url}api/keys/{$key.api_key|escape}/" class="form" role="form">
 	{$crumb_key|crumb_input}
 	<input type="hidden" name="done" value="1" />
 
-<table class="api-key-or-token">
+<table class="table api-key-or-token">
 	<tr>
-		<td>API Key</td><td class="api-credential">{$key.api_key|escape}</td>
+		<td><label>API Key</label></td>
+		<td class="api-credential"><strong>{$key.api_key|escape}</strong></td>
 	</tr>
 
 	{if 0}
 	<tr>
-		<td>Application Secret</td><td>{$key.app_secret|escape}</td>
+		<td><label>Application Secret</label></td>
+		<td>{$key.app_secret|escape}</td>
 	</tr>
 	{/if}
 
 	<tr>
-		<td>Authentication Tokens</td>
+		<td><label>Authentication Tokens</label></td>
 		<td>
 		{if !$token_count}
 		There are no authenticated users for this API key
@@ -81,13 +89,15 @@
 	</tr>
 
 	<tr>
-		<td>Created</td><td>{$key.created|date_format} at {$key.last_modified|date_format:"%H:%M"}</td>
+		<td><label>Created</label></td>
+		<td>{$key.created|date_format} at {$key.last_modified|date_format:"%H:%M"}</td>
 	</tr>
 
 	{if $key.created != $key.last_modified}
 
 	<tr>
-		<td>Last Modified</td><td>{$key.last_modified|date_format} at {$key.last_modified|date_format:"%H:%M"}</td>
+		<td><label>Last Modified</label></td>
+		<td>{$key.last_modified|date_format} at {$key.last_modified|date_format:"%H:%M"}</td>
 	</tr>
 
 	{/if}
@@ -96,23 +106,23 @@
 
 	<tr style="font-weight:700; color:red;"><td>Disabled</td><td>{$key.disabled|date_format}</td></tr>
 
-	<tr><td>Title</td><td>{$key.app_title|escape}</td></tr>
-	<tr><td>Description</td><td>{$key.app_description|escape}</td></tr>
+	<tr><td><label>Title</label></td><td>{$key.app_title|escape}</td></tr>
+	<tr><td><label>Description</label></td><td>{$key.app_description|escape}</td></tr>
 
 	{else}
 
 	<tr>
-		<td><label for="title">Title</label></td><td><input type="text" size="28" name="title" value="{$key.app_title|escape}" /></td>
+		<td><label for="title">Title</label></td><td><input type="text" size="28" name="title" value="{$key.app_title|escape}" class="form-control" /></td>
 	</tr>
 
 	<tr>
 		<td><label for="description">Description</label></td>
-		<td><textarea rows="10" cols="40" name="description">{$key.app_description|escape}</textarea></td>
+		<td><textarea rows="10" cols="40" name="description" class="form-control">{$key.app_description|escape}</textarea></td>
 	</tr>
 
 	<tr>
 		<td><label for="description">Callback URL</label></td>
-		<td><input type="text" size="28" name="callback" value="{$key.app_callback|escape}" /></td>
+		<td><input type="text" size="28" name="callback" value="{$key.app_callback|escape}" class="form-control" /></td>
 	</tr>
 
 	<tr class="api-admin">
@@ -122,7 +132,7 @@
 
 	<tr class="api-admin">
 		<td>&nbsp;</td>
-		<td><input type="submit" value="UPDATE" />
+		<td><input type="submit" value="UPDATE" class="btn btn-primary btn-lg" />
 	</tr>
 
 	{/if}
@@ -130,6 +140,8 @@
 </table>
 
 </form>
+
+</div>
 
 </div>
 

@@ -8,6 +8,10 @@
 	include("include/init.php");
 	loadlib("api");
 
+	if (features_is_enabled('ensure_post_data')) {
+		api_utils_ensure_post_data();
+	}
+
 	$method = request_str("method");
 
 	api_dispatch($method);

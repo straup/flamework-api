@@ -80,11 +80,15 @@
 		}
 
 		if ($key_row['deleted']){
-			return array('ok' => 0, 'error' => 'Invalid API key');
+			return array('ok' => 0, 'error' => 'API key has been deleted');
 		}
 
 		if ($key_row['disabled']){
 			return array('ok' => 0, 'error' => 'API key is disabled');
+		}
+
+		if (($key_row['expires']) && ($key_row['expires'] <= time())){
+			return array('ok' => 0, 'error' => 'API key is expired');
 		}
 
 		if ((features_is_enabled("api_throttling")) && (api_throttle_is_key_throttled($key_row))){
