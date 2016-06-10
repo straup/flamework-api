@@ -1,0 +1,35 @@
+var yourapp = lampzen || {};
+
+yourapp.api = (function(){
+
+    var _api = undefined;
+
+    var self = {
+
+	'init': function(){
+
+	    _api = new flamework.api();
+	    _api.set_handler('endpoint', yourapp.api.endpoint);
+	    _api.set_handler('sitetoken', yourapp.api.sitetoken);
+	},
+
+	'call': function(method, data, on_success, on_error){
+	    _api.call(method, data, on_success, on_error);
+	},
+
+	'endpoint': function(){
+	    return document.body.getAttribute("data-api-endpoint");
+	},
+
+	'sitetoken': function(){
+	    return document.body.getAttribute("data-api-site-token");
+	}
+    }
+
+    return self;
+
+})();
+
+window.addEventListener('load', function(e){	
+    yourapp.api.init();
+});
