@@ -1,105 +1,190 @@
 var flamework = flamework || {};
-flamework.api = flamework.api || {};
 
-flamework.api = (function(){
+/*
+
+  api = new flamework.api();
+  api.set_handler('endpoint', lampzen.api.endpoint);
+  api.set_handler('sitetoken', lampzen.api.sitetoken);
+
+*/
+
+flamework.api = function(){
+
+    var null_handler = function(){
+	return undefined;
+    };
 
     var self = {
 
-	'call': function(method, data, on_success, on_error){
+	'_handlers': {
+	    'endpoint': null_handler,
+	    'sitetoken': null_handler,
+	},
 
-	    var endpoint = self.endpoint();
+	'set_handler': function(target, handler){
+
+	    if (! self._handlers[target]){
+		console.log("MISSING " + target);
+		return false;
+	    }
+
+	    if (typeof(handler) != "function"){
+		console.log(target + " IS NOT A FUNCTION");
+		return false;
+	    }
+
+	    self._handlers[target] = handler;
+	},
+
+	'get_handler': function(target){
+
+	    if (! self._handlers[target]){
+		return false;
+	    }
+
+	    return self._handlers[target];
+	},
+
+	'call': function(method, data, on_success, on_error){
     
 	    var dothis_onsuccess = function(rsp){
+
 		if (on_success){
 		    on_success(rsp);
 		}
 	    };
 	    
 	    var dothis_onerror = function(rsp){
-		var parse_rsp = function(rsp){
-		    if (! rsp['responseText']){
-			console.log("Missing response text");
-			return;
-		    }
-		    
-		    try {
-			rsp = JSON.parse(rsp['responseText']);
-			return rsp;
-		    } catch (e) {
-			console.log("Failed to parse response text");
-			return;
-		    }
-		};
-		
-		rsp = parse_rsp(rsp);
-		
+			
+		console.log(rsp);
+
 		if (on_error){
 		    on_error(rsp);
 		}
 	    };
-	    
-	    var ima_formdata = (data.append) ? 1 : 0;
-	    
-	    if (ima_formdata){
+
+	    var get_endpoint = self.get_handler('endpoint');
+
+	    if (! get_endpoint){
+		dothis_onerror(self.destruct("Missing endpoint handler"));
+		return false
+	    }
+
+	    endpoint = get_endpoint();
+
+	    if (! endpoint){
+		dothis_onerror(self.destruct("Endpoint handler returns no endpoint!"));
+		return false
+	    }
+
+	    var form_data = data;
+
+	    if (! form_data.append){
+
+		form_data = new FormData();
 		
-		data.append('method', method);
-		
-		if (! data.access_token){
-		    data.append('access_token', self.site_token());
-		}
-		
-	    } else {
-		
-		data['method'] = method;
-		
-		if (! data['access_token']){
-		    data['access_token'] = self.site_token();
+		for (key in data){
+		    form_data.append(key, data[key]);
 		}
 	    }
-	    
-	    var args = {
-		'url': endpoint,
-		'type': 'POST',
-		'data': data,
-		'dataType': 'json',
-		'success': dothis_onsuccess,
-		'error': dothis_onerror
+
+	    form_data.append('method', method);
+		
+	    if (! form_data.access_token){
+
+		var get_sitetoken = self.get_handler('sitetoken');
+
+		if (! get_sitetoken){
+		    dothis_onerror(self.destruct("there is no sitetoken handler"));
+		    return false;
+		}
+
+		form_data.append('access_token', get_sitetoken());
+	    }
+		
+	    var onload = function(rsp){
+
+		var target = rsp.target;
+
+		if (target.readyState != 4){
+		    return;
+		}
+
+		var status_code = target['status'];
+		var status_text = target['statusText'];
+		
+		var raw = target['responseText'];
+		var data = undefined;
+
+		try {
+		    data = JSON.parse(raw);
+		}
+
+		catch (e){
+
+		    dothis_onerror(self.destruct("failed to parse JSON " + e));
+		    return false;
+		}
+
+		if (data['stat'] != 'ok'){
+
+		    dothis_onerror(data);
+		    return false;
+		}
+
+		dothis_onsuccess(data);
+		return true;
 	    };
 	    
-	    if (ima_formdata){
-		args['cache'] = false;
-		args['contentType'] = false;
-		args['processData'] = false;
-	    }
+	    var onprogress = function(rsp){
+		// console.log("progress");
+	    };
 	    
-	    $.ajax(args);	    
+	    var onfailed = function(rsp){
+
+		dothis_onerror(self.destruct("connection failed " + rsp));
+	    };
+
+	    var onabort = function(rsp){
+
+		dothis_onerror(self.destruct("connection aborted " + rsp));
+	    };
+
+	    // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data
+
+	    try {
+		var req = new XMLHttpRequest();
+
+		req.addEventListener("load", onload);
+		req.addEventListener("progress", onprogress);
+		req.addEventListener("error", onfailed);
+		req.addEventListener("abort", onabort);
+		
+		req.open("POST", endpoint, true);
+		req.send(form_data);
+		
+	    } catch (e) {
+		
+		dothis_onerror(self.destruct("failed to send request, because " + e));
+		return false;
+	    }
+
 	    return false;
 	},
 
-	'endpoint': function(){
-	    return document.body.getAttribute("data-api-endpoint");
-	},
+	'destruct': function(msg){
 
-	'site_token': function(){
-	    return document.body.getAttribute("data-api-site-token");
-	}
+	    return {
+		'stat': 'error',
+		'error': {
+		    'code': 999,
+		    'message': msg
+		}
+	    };
+
+	},
     }
 
     return self;
 
-})();
-
-flamework_api_call(method, data, on_success, on_error){
-	console.log("deprecated method 'flamework_api_call' invoked, please use 'flamework.api.call' instead");
-	return flamework.api.call(method, data, on_success, on_error);
-}
-
-flamework_api_endpoint(){
-	console.log("deprecated method 'flamework_api_endpoint' invoked, please use 'flamework.api.endpoint' instead");
-	return flamework.api.endpoint();
-}
-
-flamework_api_site_token(){
-	console.log("deprecated method 'flamework_api_site_token' invoked, please use 'flamework.api.site_token' instead");
-	return flamework.api.site_token();
-}
+};

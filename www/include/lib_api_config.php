@@ -24,6 +24,10 @@
 			} else {}
 		}
 
+		if ($GLOBALS['cfg']['abs_root_suffix']){
+			$GLOBALS['cfg']['api_abs_root_url'] = $GLOBALS['cfg']['api_abs_root_url'] . $GLOBALS['cfg']['abs_root_suffix'] . "/";
+		}
+
 		# If I have an API specific subdomain/prefix then check to see if I am already
 		# running on that host; if not then update the 'api_server_name' config
 
