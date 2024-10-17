@@ -14,6 +14,10 @@ You can either install all of the files manually or you can the `bin/setup.sh`
 script which will install most of the relevant bits automatically and make a
 note of the stuff you'll see need to do yourself.
 
+## Important
+
+This package is no longer maintained. All of this work has been merged in to [sfomuseum/flamework](https://github.com/sfomuseum/flamework).
+
 See also
 --
 
